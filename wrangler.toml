@@ -1,0 +1,7 @@
+name = "eventthang5"
+compatibility_date = "2025-07-15"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "eventthang5-db"
+database_id = "54d463ea-69ca-4629-8321-fedac9571f0c"

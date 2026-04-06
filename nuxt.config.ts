@@ -2,6 +2,14 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
+  runtimeConfig: {
+    adminEmail: 'admin@sunshine.com',
+    adminPassword: 'sunshinetelecom',
+    sessionSecret: 'sunshine-telecom-session-secret-key-2026!!',
+  },
+  nitro: {
+    preset: 'cloudflare-pages',
+  },
   vite: {
     optimizeDeps: {
       include: [
