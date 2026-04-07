@@ -116,23 +116,27 @@ async function submit() {
   </div>
 </template>
 
-<style scoped>
+<style>
 *, *::before, *::after { box-sizing: border-box; }
-
-body {
+html, body {
   margin: 0;
   padding: 0;
   background-color: #1e293b;
+  min-height: 100%;
 }
+</style>
+
+<style scoped>
 
 .page {
   position: relative;
-  min-height: 100svh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
   background: linear-gradient(160deg, #1e293b 0%, #312e81 100%);
-  padding: 4.5rem 1rem 1rem;
+  padding: env(safe-area-inset-top, 4.5rem) 1rem env(safe-area-inset-bottom, 1rem);
+  padding-top: max(4.5rem, env(safe-area-inset-top));
   overflow: hidden;
 }
 
