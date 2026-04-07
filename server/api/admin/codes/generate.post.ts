@@ -41,10 +41,10 @@ export default defineEventHandler(async (event) => {
     ).bind(code).run()
   }
 
-  // Đồng bộ sang Google Sheets - dùng waitUntil để CF Worker không bị kill trước khi fetch xong
+  // Đồng bộ sang Google Sheets
   const webhookUrl = getSheetsWebhookUrl(event)
   if (webhookUrl) {
-    event.context.cloudflare.ctx.waitUntil(sheetsAddCodes(webhookUrl, generated))
+    await sheetsAddCodes(webhookUrl, generated)
   }
 
   return { codes: generated }
