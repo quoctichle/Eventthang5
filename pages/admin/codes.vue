@@ -7,8 +7,18 @@ const generating = ref(false)
 const lastGenerated = ref<string[]>([])
 const selectedIds = ref<number[]>([])
 const bulkDeleting = ref(false)
-const spunPopupCode = ref('')   // code đã quay, hiển thị popup
-const bulkResultMsg = ref('')   // thông báo sau khi xoá hàng loạt
+const spunPopupCode = ref('')
+const bulkResultMsg = ref('')
+
+// Phân trang
+const PAGE_SIZE = 10
+const currentPage = ref(1)
+const pagedCodes = computed(() => {
+  const list = codes.value ?? []
+  const start = (currentPage.value - 1) * PAGE_SIZE
+  return list.slice(start, start + PAGE_SIZE)
+})
+const totalPages = computed(() => Math.ceil((codes.value?.length ?? 0) / PAGE_SIZE))
 
 // Tính prefix hiện tại để hiển thị
 const now = new Date()
@@ -21,6 +31,7 @@ async function generate10() {
     const res = await $fetch<{ codes: string[] }>('/api/admin/codes/generate', { method: 'POST' })
     lastGenerated.value = res.codes
     await refresh()
+    currentPage.value = 1
   } finally {
     generating.value = false
   }
@@ -37,14 +48,16 @@ function tryDeleteCode(c: any) {
 
 // Checkbox logic
 const nonSpunCodes = computed(() => (codes.value as any[] ?? []).filter(c => !c.is_spun))
-const allSelected = computed(() =>
-  nonSpunCodes.value.length > 0 && nonSpunCodes.value.every((c: any) => selectedIds.value.includes(c.id))
+const allPageSelected = computed(() =>
+  pagedCodes.value.filter((c: any) => !c.is_spun).length > 0 &&
+  pagedCodes.value.filter((c: any) => !c.is_spun).every((c: any) => selectedIds.value.includes(c.id))
 )
 function toggleAll() {
-  if (allSelected.value) {
-    selectedIds.value = []
+  const pageNonSpun = pagedCodes.value.filter((c: any) => !c.is_spun).map((c: any) => c.id)
+  if (allPageSelected.value) {
+    selectedIds.value = selectedIds.value.filter(id => !pageNonSpun.includes(id))
   } else {
-    selectedIds.value = nonSpunCodes.value.map((c: any) => c.id)
+    selectedIds.value = [...new Set([...selectedIds.value, ...pageNonSpun])]
   }
 }
 function toggleOne(id: number) {
@@ -135,8 +148,8 @@ async function bulkDelete() {
             <th class="col-cb">
               <input
                 type="checkbox"
-                :checked="allSelected"
-                :indeterminate="selectedIds.length > 0 && !allSelected"
+                :checked="allPageSelected"
+                :indeterminate="selectedIds.length > 0 && !allPageSelected"
                 @change="toggleAll"
               />
             </th>
@@ -148,7 +161,7 @@ async function bulkDelete() {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="c in codes" :key="c.id" :class="{ 'row-spun': c.is_spun }">
+          <tr v-for="c in pagedCodes" :key="c.id" :class="{ 'row-spun': c.is_spun }">
             <td class="col-cb">
               <input
                 v-if="!c.is_spun"
@@ -178,6 +191,16 @@ async function bulkDelete() {
         </tbody>
       </table>
       <p v-else class="empty">Chưa có mã nào.</p>
+
+      <!-- Phân trang -->
+      <div v-if="totalPages > 1" class="pagination">
+        <button :disabled="currentPage === 1" @click="currentPage--">‹</button>
+        <template v-for="p in totalPages" :key="p">
+          <button :class="{ active: p === currentPage }" @click="currentPage = p">{{ p }}</button>
+        </template>
+        <button :disabled="currentPage === totalPages" @click="currentPage++">›</button>
+        <span class="page-info">Trang {{ currentPage }}/{{ totalPages }}</span>
+      </div>
     </section>
   </div>
 </template>
@@ -223,6 +246,19 @@ input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-colo
 .btn-del-disabled { background: #f1f5f9; color: #94a3b8; cursor: pointer; }
 .btn-del-disabled:hover { background: #e2e8f0; }
 .empty { color: #94a3b8; }
+.pagination {
+  display: flex; align-items: center; gap: 0.35rem; margin-top: 1rem;
+  flex-wrap: wrap;
+}
+.pagination button {
+  min-width: 32px; height: 32px; border: 1px solid #e2e8f0;
+  background: white; border-radius: 6px; cursor: pointer; font-size: 0.85rem;
+  color: #475569; transition: background 0.15s;
+}
+.pagination button:hover:not(:disabled) { background: #f1f5f9; }
+.pagination button.active { background: #2563eb; color: white; border-color: #2563eb; font-weight: 700; }
+.pagination button:disabled { opacity: 0.4; cursor: not-allowed; }
+.page-info { font-size: 0.8rem; color: #94a3b8; margin-left: 0.5rem; }
 /* Popup */
 .popup-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
 .popup-box { background: white; border-radius: 16px; padding: 2rem 2.5rem; max-width: 380px; width: 90%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }

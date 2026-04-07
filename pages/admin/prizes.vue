@@ -23,6 +23,15 @@ const filtered = computed(() => {
   return list
 })
 
+const PAGE_SIZE = 10
+const currentPage = ref(1)
+watch([search, filter], () => { currentPage.value = 1 })
+const pagedFiltered = computed(() => {
+  const start = (currentPage.value - 1) * PAGE_SIZE
+  return filtered.value.slice(start, start + PAGE_SIZE)
+})
+const totalPages = computed(() => Math.ceil(filtered.value.length / PAGE_SIZE))
+
 async function resetWinner(code: string) {
   if (!confirm(`Xóa kết quả quay của mã ${code}? Người dùng sẽ có thể quay lại!`)) return
   await $fetch('/api/admin/winners/by-code', { method: 'DELETE', body: { code } })
@@ -60,7 +69,7 @@ async function resetWinner(code: string) {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="r in filtered" :key="r.id">
+          <tr v-for="r in pagedFiltered" :key="r.id">
             <td><span class="code-chip">{{ r.code }}</span></td>
             <td>
               <span v-if="r.prize_name" class="prize-chip">{{ r.prize_name }}</span>
@@ -75,7 +84,15 @@ async function resetWinner(code: string) {
           </tr>
         </tbody>
       </table>
-      <p v-else class="empty">Không có bản ghi nào.</p>
+      <div v-if="filtered.length && totalPages > 1" class="pagination">
+        <button :disabled="currentPage === 1" @click="currentPage--">‹</button>
+        <template v-for="p in totalPages" :key="p">
+          <button :class="{ active: p === currentPage }" @click="currentPage = p">{{ p }}</button>
+        </template>
+        <button :disabled="currentPage === totalPages" @click="currentPage++">›</button>
+        <span class="page-info">Trang {{ currentPage }}/{{ totalPages }}</span>
+      </div>
+      <p v-if="!filtered.length" class="empty">Không có bản ghi nào.</p>
     </section>
   </div>
 </template>
@@ -106,4 +123,17 @@ th { color: #64748b; font-weight: 600; background: #f8fafc; }
 .btn-reset { background: #fef9c3; color: #92400e; border: 1px solid #fde68a; padding: 0.25rem 0.6rem; border-radius: 5px; cursor: pointer; font-size: 0.78rem; }
 .btn-reset:hover { background: #fef08a; }
 .empty { color: #94a3b8; font-size: 0.9rem; }
+.pagination {
+  display: flex; align-items: center; gap: 0.35rem; margin-top: 1rem;
+  flex-wrap: wrap;
+}
+.pagination button {
+  min-width: 32px; height: 32px; border: 1px solid #e2e8f0;
+  background: white; border-radius: 6px; cursor: pointer; font-size: 0.85rem;
+  color: #475569; transition: background 0.15s;
+}
+.pagination button:hover:not(:disabled) { background: #f1f5f9; }
+.pagination button.active { background: #2563eb; color: white; border-color: #2563eb; font-weight: 700; }
+.pagination button:disabled { opacity: 0.4; cursor: not-allowed; }
+.page-info { font-size: 0.8rem; color: #94a3b8; margin-left: 0.5rem; }
 </style>

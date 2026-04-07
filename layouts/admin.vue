@@ -38,7 +38,8 @@ async function logout() {
 <style scoped>
 .admin-layout {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .sidebar {
@@ -50,6 +51,7 @@ async function logout() {
   flex-direction: column;
   gap: 1.5rem;
   flex-shrink: 0;
+  overflow-y: auto;
 }
 
 .logo {
@@ -123,6 +125,7 @@ async function logout() {
   flex: 1;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 header {
@@ -142,5 +145,6 @@ main {
   flex: 1;
   padding: 2rem;
   background: #f8fafc;
+  overflow-y: auto;
 }
 </style>
