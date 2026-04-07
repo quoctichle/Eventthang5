@@ -24,7 +24,8 @@ const i18n = {
     congrats: "おめでとうございます！",
     close: "閉じる",
     out_of_prizes: "賞品がありません！",
-    error: "エラーが発生しました。もう一度お試しください！"
+    error: "エラーが発生しました。もう一度お試しください！",
+    enter_new_code: "別のコードを入力"
   },
   vi: {
     title: "Vòng Quay May Mắn",
@@ -37,7 +38,8 @@ const i18n = {
     congrats: "Chúc mừng!",
     close: "Đóng",
     out_of_prizes: "Đã hết giải thưởng tặng kèm!",
-    error: "Có lỗi xảy ra, vui lòng thử lại!"
+    error: "Có lỗi xảy ra, vui lòng thử lại!",
+    enter_new_code: "Nhập mã khác"
   },
   en: {
     title: "Lucky Spin Wheel",
@@ -50,7 +52,8 @@ const i18n = {
     congrats: "Congratulations!",
     close: "Close",
     out_of_prizes: "No prizes left!",
-    error: "An error occurred, please try again!"
+    error: "An error occurred, please try again!",
+    enter_new_code: "Enter another code"
   },
   my: {
     title: "ကံစမ်းမဲဘီး",
@@ -63,7 +66,8 @@ const i18n = {
     congrats: "ဂုဏ်ယူပါတယ်!",
     close: "ပိတ်မည်",
     out_of_prizes: "ဆုများကုန်သွားပါပြီ!",
-    error: "အမှားအယွင်းတစ်ခုဖြစ်ပွားခဲ့သည်၊ ကျေးဇူးပြု၍ ပြန်လည်ကြိုးစားပါ!"
+    error: "အမှားအယွင်းတစ်ခုဖြစ်ပွားခဲ့သည်၊ ကျေးဇူးပြု၍ ပြန်လည်ကြိုးစားပါ!",
+    enter_new_code: "အခြားကုဒ်ရိုက်ထည့်ပါ"
   }
 }
 const t = computed(() => i18n[lang.value as keyof typeof i18n] || i18n.ja)
@@ -311,6 +315,11 @@ onMounted(() => {
   }
 })
 
+async function enterNewCode() {
+  await $fetch('/api/auth/logout', { method: 'POST' })
+  window.location.href = '/access'
+}
+
 watch(segments, () => {
   nextTick(() => drawWheel(currentAngle))
 }, { deep: true })
@@ -335,6 +344,7 @@ watch(segments, () => {
       <div class="won-prize-name">{{ result.prize_name ?? result.name }}</div>
       <div v-if="result.description" class="won-note">{{ result.description }}</div>
       <div class="won-sub">{{ t.note }}</div>
+      <button class="new-code-btn" @click="enterNewCode">{{ t.enter_new_code }}</button>
     </div>
 
     <!-- Vòng quay (chỉ hiện khi chưa quay) -->
@@ -485,6 +495,20 @@ body {
 .won-note { color: #94a3b8; font-size: 0.9rem; }
 .won-sub { color: #475569; font-size: 0.78rem; margin-top: 0.5rem; }
 .empty { color: #64748b; }
+.new-code-btn {
+  margin-top: 1rem;
+  background: transparent;
+  color: #fbbf24;
+  border: 1px solid #fbbf24;
+  padding: 0.6rem 1.5rem;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.new-code-btn:hover {
+  background: rgba(251,191,36,0.1);
+}
 
 /* Modal */
 .overlay {
