@@ -35,6 +35,7 @@ async function submit() {
 
 <template>
   <div class="page" @click="showLangDropdown = false">
+
     <!-- Language switcher -->
     <div class="lang-switcher" @click.stop="showLangDropdown = !showLangDropdown">
       <div class="current-lang">
@@ -65,23 +66,55 @@ async function submit() {
       </Transition>
     </div>
 
-    <div class="box">
-      <div class="icon">🎫</div>
+    <!-- Background decoration -->
+    <div class="bg-orb orb1"></div>
+    <div class="bg-orb orb2"></div>
+    <div class="bg-orb orb3"></div>
+
+    <!-- Card -->
+    <div class="card">
+      <!-- Logo / Brand -->
+      <div class="brand">
+        <div class="logo-ring">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="24" cy="24" r="20" stroke="url(#g1)" stroke-width="3"/>
+            <path d="M16 24l5 5 11-10" stroke="url(#g2)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <defs>
+              <linearGradient id="g1" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#6366f1"/><stop offset="1" stop-color="#a855f7"/>
+              </linearGradient>
+              <linearGradient id="g2" x1="14" y1="18" x2="34" y2="32" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#6366f1"/><stop offset="1" stop-color="#a855f7"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+      </div>
+
       <h1>{{ t.access_title }}</h1>
       <p>{{ t.access_desc }}</p>
+
       <form @submit.prevent="submit">
-        <input
-          v-model="code"
-          type="text"
-          :placeholder="t.access_placeholder"
-          required
-          autocomplete="off"
-          autofocus
-          :disabled="loading"
-        />
-        <p v-if="error" class="error">{{ error }}</p>
-        <button type="submit" :disabled="loading">
-          {{ loading ? t.access_loading : t.access_btn }}
+        <div class="input-wrap" :class="{ 'has-error': error }">
+          <input
+            v-model="code"
+            type="text"
+            :placeholder="t.access_placeholder"
+            required
+            autocomplete="off"
+            autofocus
+            :disabled="loading"
+          />
+        </div>
+        <Transition name="err">
+          <p v-if="error" class="error">
+            <svg viewBox="0 0 20 20" fill="currentColor" class="err-icon"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+            {{ error }}
+          </p>
+        </Transition>
+        <button type="submit" :disabled="loading" class="submit-btn">
+          <span v-if="loading" class="spinner"></span>
+          <span>{{ loading ? t.access_loading : t.access_btn }}</span>
         </button>
       </form>
     </div>
@@ -89,81 +122,210 @@ async function submit() {
 </template>
 
 <style scoped>
+*, *::before, *::after { box-sizing: border-box; }
+
 .page {
   position: relative;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(160deg, #1e293b 0%, #312e81 100%);
+  background: #0f0f1a;
   padding: 1rem;
+  overflow: hidden;
 }
+
+/* Orb background decorations */
+.bg-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  opacity: 0.35;
+}
+.orb1 { width: 500px; height: 500px; background: #6366f1; top: -150px; left: -150px; }
+.orb2 { width: 400px; height: 400px; background: #a855f7; bottom: -100px; right: -100px; }
+.orb3 { width: 300px; height: 300px; background: #3b82f6; top: 40%; left: 50%; transform: translate(-50%, -50%); opacity: 0.2; }
+
+/* Language switcher */
 .lang-switcher {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
-  z-index: 10;
+  top: 1.25rem;
+  right: 1.25rem;
+  z-index: 20;
   user-select: none;
 }
 .current-lang {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  background: transparent;
-  padding: 0.35rem 0.6rem 0.35rem 0.4rem;
+  gap: 0.5rem;
+  padding: 0.3rem 0.6rem 0.3rem 0.35rem;
   border-radius: 50px;
   cursor: pointer;
-  border: 2px solid #f59e0b;
-  box-shadow: 0 4px 12px rgba(245,158,11,0.2);
-  transition: transform 0.2s, background 0.2s;
+  border: 1.5px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.07);
+  backdrop-filter: blur(8px);
+  transition: background 0.2s, transform 0.2s;
 }
-.current-lang:hover { transform: scale(1.05); background: rgba(255,255,255,0.05); }
+.current-lang:hover { background: rgba(255,255,255,0.12); transform: scale(1.04); }
 .flag-circle {
-  width: 32px; height: 32px; border-radius: 50%; overflow: hidden;
+  width: 28px; height: 28px; border-radius: 50%; overflow: hidden;
   display: flex; align-items: center; justify-content: center;
-  background: #f8fafc; border: 1px solid #e2e8f0;
+  background: #f8fafc; border: 1px solid rgba(255,255,255,0.2);
+  flex-shrink: 0;
 }
 .flag-icon { width: 100%; height: 100%; object-fit: cover; transform: scale(1.2); }
-.chevron { width: 18px; height: 18px; color: #10b981; transition: transform 0.3s ease; margin-right: 0.2rem; }
+.chevron { width: 16px; height: 16px; color: rgba(255,255,255,0.7); transition: transform 0.3s; }
 .chevron.rotate { transform: rotate(180deg); }
 .lang-dropdown {
-  position: absolute; top: calc(100% + 0.6rem); right: 0;
-  background: #f8fafc; border-radius: 16px; overflow: hidden;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.3); display: flex;
-  flex-direction: column; min-width: 160px; border: 1px solid #e2e8f0;
+  position: absolute; top: calc(100% + 0.5rem); right: 0;
+  background: #1e1e2e; border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px; overflow: hidden;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+  display: flex; flex-direction: column; min-width: 155px;
 }
 .lang-option {
-  padding: 0.7rem 1.2rem; cursor: pointer;
-  display: flex; align-items: center; gap: 0.8rem; transition: background 0.2s;
+  padding: 0.65rem 1rem; cursor: pointer;
+  display: flex; align-items: center; gap: 0.75rem; transition: background 0.15s;
 }
-.lang-option:hover { background: #e2e8f0; }
-.lang-option.active { background: #cbd5e1; }
-.lang-option.active .lang-text { color: #064e3b; font-weight: 700; }
-.lang-text { color: #334155; font-weight: 600; font-size: 1rem; }
+.lang-option:hover { background: rgba(255,255,255,0.07); }
+.lang-option.active { background: rgba(99,102,241,0.25); }
+.lang-option.active .lang-text { color: #a5b4fc; font-weight: 700; }
+.lang-text { color: rgba(255,255,255,0.85); font-weight: 500; font-size: 0.9rem; }
+
+/* Card */
+.card {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 420px;
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 24px;
+  padding: 2.5rem 2rem 2rem;
+  text-align: center;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+/* Logo ring */
+.brand { display: flex; justify-content: center; margin-bottom: 1.5rem; }
+.logo-ring {
+  width: 64px; height: 64px;
+  background: rgba(99,102,241,0.15);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  border: 1.5px solid rgba(99,102,241,0.4);
+  box-shadow: 0 0 24px rgba(99,102,241,0.3);
+}
+.logo-ring svg { width: 32px; height: 32px; }
+
+h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 0.5rem;
+  letter-spacing: -0.01em;
+}
+p {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.88rem;
+  margin: 0 0 1.75rem;
+  line-height: 1.5;
+}
+
+/* Input */
+.input-wrap {
+  position: relative;
+  margin-bottom: 0.5rem;
+}
+.input-wrap::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 13px;
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+.input-wrap:focus-within::before { opacity: 1; }
+input {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding: 0.9rem 1.1rem;
+  background: rgba(255,255,255,0.06);
+  border: 1.5px solid rgba(255,255,255,0.12);
+  border-radius: 12px;
+  font-size: 1.05rem;
+  text-align: center;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+input::placeholder { color: rgba(255,255,255,0.3); letter-spacing: 0.05em; font-weight: 400; text-transform: none; }
+input:focus { border-color: transparent; background: rgba(255,255,255,0.09); }
+input:disabled { opacity: 0.5; }
+.has-error input { border-color: #f87171; }
+
+/* Error */
+.error {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #f87171;
+  font-size: 0.82rem;
+  font-weight: 500;
+  margin: 0.5rem 0 0;
+  justify-content: center;
+}
+.err-icon { width: 15px; height: 15px; flex-shrink: 0; }
+.err-enter-active, .err-leave-active { transition: opacity 0.2s, transform 0.2s; }
+.err-enter-from, .err-leave-to { opacity: 0; transform: translateY(-4px); }
+
+/* Button */
+.submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  margin-top: 1.25rem;
+  padding: 0.9rem;
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  box-shadow: 0 8px 24px rgba(99,102,241,0.4);
+  transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+.submit-btn:hover:not(:disabled) {
+  opacity: 0.92;
+  transform: translateY(-1px);
+  box-shadow: 0 12px 32px rgba(99,102,241,0.5);
+}
+.submit-btn:active:not(:disabled) { transform: translateY(0); }
+.submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Spinner */
+.spinner {
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Transitions */
 .fade-enter-active, .fade-leave-active { transition: opacity 0.15s, transform 0.15s; }
 .fade-enter-from, .fade-leave-to { opacity: 0; transform: translateY(-6px); }
-.box {
-  background: white; border-radius: 20px; padding: 2.5rem 2rem;
-  width: 100%; max-width: 400px; text-align: center;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-}
-.icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
-h1 { font-size: 1.4rem; font-weight: 700; color: #1e293b; margin: 0 0 0.5rem; }
-p { color: #64748b; font-size: 0.9rem; margin-bottom: 1.5rem; }
-input {
-  width: 100%; padding: 0.8rem 1rem; border: 2px solid #e2e8f0;
-  border-radius: 10px; font-size: 1rem; text-align: center;
-  letter-spacing: 0.1em; font-weight: 600; box-sizing: border-box; text-transform: uppercase;
-}
-input:focus { outline: none; border-color: #2563eb; }
-input:disabled { background: #f8fafc; }
-.error { color: #dc2626; font-size: 0.85rem; margin: 0.5rem 0; }
-button {
-  width: 100%; margin-top: 1rem;
-  background: linear-gradient(135deg, #2563eb, #7c3aed);
-  color: white; border: none; padding: 0.85rem;
-  border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer;
-}
-button:hover:not(:disabled) { opacity: 0.9; }
-button:disabled { opacity: 0.6; cursor: not-allowed; }
 </style>
