@@ -303,23 +303,21 @@ async function spin() {
   currentAngle = targetAngle % (Math.PI * 2)
   spinning.value = false
 
-  // Lưu kết quả vào DB
-  try {
-    await $fetch('/api/spin', { method: 'POST', body: { prize_id: winner.id } })
-    alreadySpun.value = true
+    // Hiển thị kết quả NGAY sau khi animation kết thúc, không chờ API
     result.value = winner
     showResult.value = true
-  } catch (e: any) {
-    if (e?.statusCode === 401 || e?.data?.statusCode === 401) {
-      await navigateTo('/access')
-    } else if (e?.data?.statusCode === 409) {
-      alreadySpun.value = true
-    } else {
-      alert(t.value.error)
-    }
-  }
-}
+    alreadySpun.value = true
 
+    // Lưu kết quả vào DB + Sheets ở background (không block UI)
+    $fetch('/api/spin', { method: 'POST', body: { prize_id: winner.id } })
+      .catch((e: any) => {
+        if (e?.statusCode === 401 || e?.data?.statusCode === 401) {
+          navigateTo('/access')
+        } else if (e?.data?.statusCode === 409) {
+          // Mã đã quay rồi - không làm gì thêm
+        }
+        // Các lỗi khác bỏ qua vì kết quả đã hiển thị
+      })
 onMounted(() => {
   drawWheel(currentAngle)
   // Tự hiển popup nếu đã quay rồi
