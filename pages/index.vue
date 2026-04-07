@@ -342,22 +342,28 @@ watch(segments, () => {
   <div class="wheel-page">
     <div class="lang-switcher" @click.stop="showLangDropdown = !showLangDropdown">
       <div class="current-lang">
-        <img :src="flags[lang]" alt="Language" class="flag-icon" />
-        <span class="arrow">▼</span>
+        <div class="flag-circle">
+          <img :src="flags[lang]" alt="Language" class="flag-icon" />
+        </div>
+        <svg class="chevron" :class="{ 'rotate': showLangDropdown }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
       </div>
       <Transition name="fade">
         <div v-if="showLangDropdown" class="lang-dropdown">
-          <div class="lang-option" @click="selectLang('ja')" v-show="lang !== 'ja'">
-            <img src="/nhat.png" alt="JP" class="flag-icon" />
+          <div class="lang-option" :class="{ active: lang === 'ja' }" @click="selectLang('ja')">
+            <div class="flag-circle"><img src="/nhat.png" alt="JP" class="flag-icon" /></div>
+            <span class="lang-text">日本語</span>
           </div>
-          <div class="lang-option" @click="selectLang('en')" v-show="lang !== 'en'">
-            <img src="/anh.png" alt="EN" class="flag-icon" />
+          <div class="lang-option" :class="{ active: lang === 'en' }" @click="selectLang('en')">
+            <div class="flag-circle"><img src="/anh.png" alt="EN" class="flag-icon" /></div>
+            <span class="lang-text">English</span>
           </div>
-          <div class="lang-option" @click="selectLang('vi')" v-show="lang !== 'vi'">
-            <img src="/viet.png" alt="VI" class="flag-icon" />
+          <div class="lang-option" :class="{ active: lang === 'vi' }" @click="selectLang('vi')">
+            <div class="flag-circle"><img src="/viet.png" alt="VI" class="flag-icon" /></div>
+            <span class="lang-text">Tiếng Việt</span>
           </div>
-          <div class="lang-option" @click="selectLang('my')" v-show="lang !== 'my'">
-            <img src="/myanma.png" alt="MY" class="flag-icon" />
+          <div class="lang-option" :class="{ active: lang === 'my' }" @click="selectLang('my')">
+            <div class="flag-circle"><img src="/myanma.png" alt="MY" class="flag-icon" /></div>
+            <span class="lang-text">မြန်မာ</span>
           </div>
         </div>
       </Transition>
@@ -435,49 +441,82 @@ body {
 .current-lang {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  background: rgba(255,255,255,0.15);
-  padding: 0.5rem 0.8rem;
+  justify-content: space-between;
+  gap: 0.6rem;
+  background: #ffffff;
+  padding: 0.35rem 0.6rem 0.35rem 0.4rem;
   border-radius: 50px;
   cursor: pointer;
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(255,255,255,0.2);
-  transition: background 0.2s;
+  border: 2px solid #d97706; /* Viền cam */
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.4);
+  transition: transform 0.2s;
 }
 .current-lang:hover {
-  background: rgba(255,255,255,0.25);
+  transform: scale(1.05);
+}
+.flag-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
 }
 .flag-icon {
-  width: 24px;
-  height: 16px;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  border-radius: 2px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  transform: scale(1.2); /* Zoom nhẹ để lấp đầy viền cong */
 }
-.arrow {
-  color: white;
-  font-size: 0.7rem;
+.chevron {
+  width: 18px;
+  height: 18px;
+  color: #064e3b; /* Máu xanh đậm */
+  transition: transform 0.3s ease;
+  margin-right: 0.2rem;
+}
+.chevron.rotate {
+  transform: rotate(180deg);
 }
 .lang-dropdown {
   position: absolute;
-  top: 120%;
+  top: calc(100% + 0.6rem);
   right: 0;
-  background: white;
-  border-radius: 8px;
+  background: #f8fafc;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
   display: flex;
   flex-direction: column;
+  min-width: 160px;
+  border: 1px solid #e2e8f0;
 }
 .lang-option {
-  padding: 0.6rem 1.2rem;
+  padding: 0.7rem 1.2rem;
   cursor: pointer;
   display: flex;
-  justify-content: center;
+  align-items: center;
+  gap: 0.8rem;
   transition: background 0.2s;
 }
 .lang-option:hover {
-  background: #f1f5f9;
+  background: #e2e8f0;
+}
+.lang-option.active {
+  background: #cbd5e1;
+}
+.lang-option.active .lang-text {
+  color: #064e3b;
+  font-weight: 700;
+}
+.lang-text {
+  color: #334155;
+  font-weight: 600;
+  font-size: 1rem;
 }
 .title {
   font-size: clamp(1.8rem, 6vw, 2.8rem);
