@@ -6,7 +6,8 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 401, message: 'Unauthorized' })
   }
 
-  const webhookUrl = (config.sheetsWebhookUrl || (event.context.cloudflare?.env as any)?.SHEETS_WEBHOOK_URL) as string
+  const { getSheetsWebhookUrl } = await import('~/server/utils/sheets')
+  const webhookUrl = getSheetsWebhookUrl(event)
 
   if (!webhookUrl) {
     return { ok: false, error: 'SHEETS_WEBHOOK_URL chưa được cấu hình', webhookUrl: null }

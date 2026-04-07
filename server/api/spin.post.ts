@@ -1,4 +1,4 @@
-import { sheetsUpdateSpin } from '~/server/utils/sheets'
+import { sheetsUpdateSpin, getSheetsWebhookUrl } from '~/server/utils/sheets'
 
 // POST /api/spin - Ghi nhận kết quả quay (mỗi mã chỉ được quay 1 lần)
 export default defineEventHandler(async (event) => {
@@ -26,7 +26,7 @@ export default defineEventHandler(async (event) => {
   const prizeName = (prize?.name as string) ?? ''
 
   // Đồng bộ kết quả quay sang Google Sheets - dùng waitUntil để CF Worker không bị kill trước khi fetch xong
-  const webhookUrl = (config.sheetsWebhookUrl || (event.context.cloudflare?.env as any)?.SHEETS_WEBHOOK_URL) as string
+  const webhookUrl = getSheetsWebhookUrl(event)
   if (webhookUrl) {
     event.context.cloudflare.ctx.waitUntil(sheetsUpdateSpin(webhookUrl, code, prizeName))
   }

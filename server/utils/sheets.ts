@@ -1,6 +1,14 @@
 // Utility: gửi dữ liệu lên Google Sheets qua Apps Script webhook
 // Không throw lỗi để không ảnh hưởng đến luồng chính nếu Sheets tạm thời unavailable
 
+export function getSheetsWebhookUrl(event: any): string {
+  // Cloudflare Pages: đọc trực tiếp từ CF env (không qua process.env)
+  return event.context.cloudflare?.env?.SHEETS_WEBHOOK_URL
+    || event.context.cloudflare?.env?.NUXT_SHEETS_WEBHOOK_URL
+    || useRuntimeConfig(event).sheetsWebhookUrl
+    || ''
+}
+
 export async function sheetsAddCodes(webhookUrl: string, codes: string[]): Promise<void> {
   if (!webhookUrl) return
   try {

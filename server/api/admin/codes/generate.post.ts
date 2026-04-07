@@ -1,4 +1,4 @@
-import { sheetsAddCodes } from '~/server/utils/sheets'
+import { sheetsAddCodes, getSheetsWebhookUrl } from '~/server/utils/sheets'
 
 // POST /api/admin/codes/generate - Tạo 10 mã ngẫu nhiên theo format T{month}{year2digit}{6random}
 export default defineEventHandler(async (event) => {
@@ -42,7 +42,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Đồng bộ sang Google Sheets - dùng waitUntil để CF Worker không bị kill trước khi fetch xong
-  const webhookUrl = (config.sheetsWebhookUrl || (event.context.cloudflare?.env as any)?.SHEETS_WEBHOOK_URL) as string
+  const webhookUrl = getSheetsWebhookUrl(event)
   if (webhookUrl) {
     event.context.cloudflare.ctx.waitUntil(sheetsAddCodes(webhookUrl, generated))
   }
