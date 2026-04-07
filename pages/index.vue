@@ -8,6 +8,97 @@ const { data: spinData } = await useFetch<{ spun: boolean, result: any }>('/api/
 
 const route = useRoute()
 
+// --- Multi-language Support ---
+const lang = ref('ja') // Mặc định tiếng Nhật
+const translatedPrizes = ref<any[]>([])
+
+const i18n = {
+  ja: {
+    title: "ラッキールーレット",
+    won: "当選しました！",
+    note: "コードごとに1回のみ抽選可能です。賞品の受け取りについては主催者にお問い合わせください。",
+    spin: "回す",
+    spinning: "回転中...",
+    spin_now: "🎰 今すぐ回す",
+    empty: "賞品が設定されていません。",
+    congrats: "おめでとうございます！",
+    close: "閉じる",
+    out_of_prizes: "賞品がありません！",
+    error: "エラーが発生しました。もう一度お試しください！"
+  },
+  vi: {
+    title: "Vòng Quay May Mắn",
+    won: "Bạn đã trúng giải!",
+    note: "Mỗi mã chỉ được quay 1 lần. Liên hệ BTC để nhận giải.",
+    spin: "QUAY",
+    spinning: "Đang quay...",
+    spin_now: "🎰 QUAY NGAY",
+    empty: "Chưa có giải thưởng nào được cấu hình.",
+    congrats: "Chúc mừng!",
+    close: "Đóng",
+    out_of_prizes: "Đã hết giải thưởng tặng kèm!",
+    error: "Có lỗi xảy ra, vui lòng thử lại!"
+  },
+  en: {
+    title: "Lucky Spin Wheel",
+    won: "You've won a prize!",
+    note: "Each code can only be spun once. Contact the organizer to claim your prize.",
+    spin: "SPIN",
+    spinning: "Spinning...",
+    spin_now: "🎰 SPIN NOW",
+    empty: "No prizes have been configured.",
+    congrats: "Congratulations!",
+    close: "Close",
+    out_of_prizes: "No prizes left!",
+    error: "An error occurred, please try again!"
+  },
+  my: {
+    title: "ကံစမ်းမဲဘီး",
+    won: "သင်ဆုရသွားပါပြီ!",
+    note: "ကုဒ်တစ်ခုလျှင်တစ်ကြိမ်သာလှည့်နိုင်သည်။ ဆုထုတ်ယူရန် စီစဉ်သူအား ဆက်သွယ်ပါ။",
+    spin: "လှည့်မည်",
+    spinning: "လှည့်နေသည်...",
+    spin_now: "🎰 ယခုလှည့်မည်",
+    empty: "ဆုများကို သတ်မှတ်ထားခြင်းမရှိပါ။",
+    congrats: "ဂုဏ်ယူပါတယ်!",
+    close: "ပိတ်မည်",
+    out_of_prizes: "ဆုများကုန်သွားပါပြီ!",
+    error: "အမှားအယွင်းတစ်ခုဖြစ်ပွားခဲ့သည်၊ ကျေးဇူးပြု၍ ပြန်လည်ကြိုးစားပါ!"
+  }
+}
+const t = computed(() => i18n[lang.value as keyof typeof i18n] || i18n.ja)
+
+// Translation API for dynamic text (Prizes from DB)
+async function translateText(text: string, targetLang: string) {
+  if (!text) return ''
+  if (targetLang === 'vi') return text // Source is vi
+  try {
+    const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=vi&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`)
+    const data = await res.json()
+    return data[0].map((x: any) => x[0]).join('')
+  } catch (e) {
+    return text // Fallback to original
+  }
+}
+
+watch([lang, prizes], async () => {
+  if (!prizes.value) return
+  
+  if (lang.value === 'vi') {
+    translatedPrizes.value = JSON.parse(JSON.stringify(prizes.value))
+    return
+  }
+
+  const translatedList = []
+  for (const p of prizes.value) {
+    const translatedName = await translateText(p.name, lang.value)
+    const translatedDesc = p.description ? await translateText(p.description, lang.value) : ''
+    translatedList.push({ ...p, name: translatedName, description: translatedDesc })
+  }
+  translatedPrizes.value = translatedList
+}, { immediate: true })
+// -----------------------------
+
 const COLORS = [
   '#f97316','#eab308','#22c55e','#06b6d4','#6366f1',
   '#ec4899','#ef4444','#84cc16','#14b8a6','#a855f7',
@@ -22,7 +113,7 @@ const alreadySpun = ref(spinData.value?.spun ?? false)
 let currentAngle = 0
 
 const segments = computed(() => {
-  const list = prizes.value ?? []
+  const list = translatedPrizes.value ?? []
   if (!list.length) return []
   const sweep = (Math.PI * 2) / list.length
   let start = 0
@@ -144,7 +235,7 @@ function drawWheel(angle = 0) {
   ctx.font = 'bold 14px sans-serif'
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
-  ctx.fillText('QUAY', cx, cy)
+  ctx.fillText(t.value.spin, cx, cy)
   ctx.restore()
 }
 
@@ -154,7 +245,7 @@ async function spin() {
   // Xác định danh sách các giải thưởng còn suất (số lượng > 0)
   const availablePrizes = segments.value.filter(seg => seg.quantity > 0)
   if (!availablePrizes.length) {
-    alert('Đã hết giải thưởng tặng kèm!')
+    alert(t.value.out_of_prizes)
     return
   }
 
@@ -207,7 +298,7 @@ async function spin() {
     } else if (e?.data?.statusCode === 409) {
       alreadySpun.value = true
     } else {
-      alert('Có lỗi xảy ra, vui lòng thử lại!')
+      alert(t.value.error)
     }
   }
 }
@@ -227,38 +318,45 @@ watch(segments, () => {
 
 <template>
   <div class="wheel-page">
-    <h1 class="title">🎡 Vòng Quay May Mắn</h1>
+    <div class="lang-switcher">
+      <button :class="{ active: lang === 'ja' }" @click="lang = 'ja'">🇯🇵 JP</button>
+      <button :class="{ active: lang === 'en' }" @click="lang = 'en'">🇬🇧 EN</button>
+      <button :class="{ active: lang === 'vi' }" @click="lang = 'vi'">🇻🇳 VI</button>
+      <button :class="{ active: lang === 'my' }" @click="lang = 'my'">🇲🇲 MY</button>
+    </div>
+
+    <h1 class="title">🎡 {{ t.title }}</h1>
     <p class="subtitle">Sunshine Telecom 2026</p>
 
     <!-- Banner kết quả nếu đã quay rồi -->
     <div v-if="alreadySpun && result" class="won-banner">
       <div class="won-icon">🎊</div>
-      <div class="won-title">Bạn đã trúng giải!</div>
+      <div class="won-title">{{ t.won }}</div>
       <div class="won-prize-name">{{ result.prize_name ?? result.name }}</div>
       <div v-if="result.description" class="won-note">{{ result.description }}</div>
-      <div class="won-sub">Mỗi mã chỉ được quay 1 lần. Liên hệ BTC để nhận giải.</div>
+      <div class="won-sub">{{ t.note }}</div>
     </div>
 
     <!-- Vòng quay (chỉ hiện khi chưa quay) -->
-    <div v-else-if="prizes && prizes.length" class="wheel-wrap">
+    <div v-else-if="translatedPrizes && translatedPrizes.length" class="wheel-wrap">
       <div class="pointer">▼</div>
       <canvas ref="canvasRef" width="420" height="420" class="canvas" @click="spin" />
       <button class="spin-btn" :disabled="spinning" @click="spin">
-        {{ spinning ? 'Đang quay...' : '🎰 QUAY NGAY' }}
+        {{ spinning ? t.spinning : t.spin_now }}
       </button>
     </div>
 
-    <div v-else class="empty">Chưa có giải thưởng nào được cấu hình.</div>
+    <div v-else class="empty">{{ t.empty }}</div>
 
     <!-- Result Modal -->
     <Transition name="pop">
       <div v-if="showResult && result" class="overlay" @click="showResult = false">
         <div class="modal" @click.stop>
           <div class="confetti">🎊</div>
-          <h2>Chúc mừng!</h2>
+          <h2>{{ t.congrats }}</h2>
           <p class="prize-name">{{ result.prize_name ?? result.name }}</p>
           <p v-if="result.description" class="prize-note">{{ result.description }}</p>
-          <button class="close-btn" @click="showResult = false">Đóng</button>
+          <button class="close-btn" @click="showResult = false">{{ t.close }}</button>
         </div>
       </div>
     </Transition>
@@ -279,6 +377,7 @@ body {
 
 <style scoped>
 .wheel-page {
+  position: relative;
   min-height: 100vh; /* changed from 80vh to 100vh for full screen */
   display: flex;
   flex-direction: column;
@@ -286,6 +385,30 @@ body {
   align-items: center;
   padding: 2rem 1rem;
   background: linear-gradient(160deg, #1e293b 0%, #312e81 100%);
+}
+.lang-switcher {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 10;
+}
+.lang-switcher button {
+  background: rgba(255,255,255,0.1);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 4px;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.lang-switcher button.active, .lang-switcher button:hover {
+  background: rgba(255,255,255,0.9);
+  color: #1e293b;
+  border-color: white;
+  font-weight: bold;
 }
 .title {
   font-size: clamp(1.8rem, 6vw, 2.8rem);
