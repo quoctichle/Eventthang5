@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const { data: me } = await useFetch('/api/auth/me')
+
 async function logout() {
   await $fetch('/api/auth/logout', { method: 'POST' })
   await navigateTo('/admin/login')
@@ -14,7 +16,12 @@ async function logout() {
         <NuxtLink to="/admin/codes">🎫 Quản lý mã</NuxtLink>
         <NuxtLink to="/admin/events">📅 Quản lý sự kiện</NuxtLink>
         <NuxtLink to="/admin/prizes">🏆 Quản lý giải thưởng</NuxtLink>
+        <NuxtLink v-if="me?.superAdmin" to="/admin/accounts">👤 Quản lý tài khoản</NuxtLink>
       </nav>
+      <div class="user-info" v-if="me?.adminEmail">
+        <span class="user-email">{{ me.adminEmail }}</span>
+        <span v-if="me.superAdmin" class="badge-super">Super Admin</span>
+      </div>
       <button class="logout" @click="logout">Đăng xuất</button>
     </aside>
     <div class="content">
@@ -73,6 +80,29 @@ async function logout() {
 
 .logout {
   margin-top: auto;
+  background: transparent;
+  border: 1px solid #475569;
+  color: #94a3b8;
+  padding: 0.6rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  text-align: left;
+  transition: background 0.2s;
+}
+
+.user-info {
+  margin-top: auto;
+  padding: 0.6rem 0.8rem;
+  border-top: 1px solid #334155;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.user-email { font-size: 0.75rem; color: #64748b; word-break: break-all; }
+.badge-super { font-size: 0.7rem; background: #7c3aed; color: white; padding: 0.1rem 0.5rem; border-radius: 10px; width: fit-content; }
+
+.logout {
   background: transparent;
   border: 1px solid #475569;
   color: #94a3b8;
