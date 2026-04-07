@@ -14,6 +14,10 @@ const code = ref('')
 const error = ref('')
 const loading = ref(false)
 
+function onInput(e: Event) {
+  code.value = (e.target as HTMLInputElement).value.toUpperCase()
+}
+
 async function submit() {
   error.value = ''
   loading.value = true
@@ -87,13 +91,14 @@ async function submit() {
       <form @submit.prevent="submit">
         <div class="input-wrap" :class="{ 'has-error': error }">
           <input
-            v-model="code"
+            :value="code"
             type="text"
             :placeholder="t.access_placeholder"
             required
             autocomplete="off"
             autofocus
             :disabled="loading"
+            @input="onInput"
           />
         </div>
         <Transition name="err">
@@ -114,13 +119,19 @@ async function submit() {
 <style scoped>
 *, *::before, *::after { box-sizing: border-box; }
 
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #1e293b;
+}
+
 .page {
   position: relative;
-  min-height: 100vh;
+  min-height: 100svh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #0f0f1a;
+  background: linear-gradient(160deg, #1e293b 0%, #312e81 100%);
   padding: 4.5rem 1rem 1rem;
   overflow: hidden;
 }
@@ -129,13 +140,13 @@ async function submit() {
 .bg-orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(80px);
+  filter: blur(90px);
   pointer-events: none;
-  opacity: 0.35;
+  opacity: 0.25;
 }
 .orb1 { width: 500px; height: 500px; background: #6366f1; top: -150px; left: -150px; }
 .orb2 { width: 400px; height: 400px; background: #a855f7; bottom: -100px; right: -100px; }
-.orb3 { width: 300px; height: 300px; background: #3b82f6; top: 40%; left: 50%; transform: translate(-50%, -50%); opacity: 0.2; }
+.orb3 { width: 300px; height: 300px; background: #3b82f6; top: 40%; left: 50%; transform: translate(-50%, -50%); opacity: 0.15; }
 
 /* Language switcher */
 .lang-switcher {
