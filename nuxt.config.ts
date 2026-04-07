@@ -6,6 +6,7 @@ export default defineNuxtConfig({
     adminEmail: 'admin@sunshine.com',
     adminPassword: 'sunshinetelecom',
     sessionSecret: 'sunshine-telecom-session-secret-key-2026!!',
+    sheetsWebhookUrl: '', // Set via NUXT_SHEETS_WEBHOOK_URL env var or Cloudflare env SHEETS_WEBHOOK_URL
   },
   nitro: {
     preset: 'cloudflare-pages',

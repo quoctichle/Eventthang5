@@ -1,3 +1,5 @@
+import { sheetsUpdateSpin } from '~/server/utils/sheets'
+
 // POST /api/spin - Ghi nhận kết quả quay (mỗi mã chỉ được quay 1 lần)
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig(event)
@@ -21,5 +23,10 @@ export default defineEventHandler(async (event) => {
   ).bind(prize_id, code).run()
 
   const prize = await DB.prepare('SELECT name FROM prizes WHERE id = ?').bind(prize_id).first()
-  return { success: true, prize_name: prize?.name }
+  const prizeName = (prize?.name as string) ?? ''
+
+  // Đồng bộ kết quả quay sang Google Sheets (fire-and-forget)
+  sheetsUpdateSpin(config.sheetsWebhookUrl, code, prizeName)
+
+  return { success: true, prize_name: prizeName }
 })

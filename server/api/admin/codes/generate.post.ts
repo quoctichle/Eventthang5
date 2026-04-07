@@ -1,3 +1,5 @@
+import { sheetsAddCodes } from '~/server/utils/sheets'
+
 // POST /api/admin/codes/generate - Tạo 10 mã ngẫu nhiên theo format T{month}{year2digit}{6random}
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig(event)
@@ -38,6 +40,9 @@ export default defineEventHandler(async (event) => {
       'INSERT INTO access_codes (code) VALUES (?)'
     ).bind(code).run()
   }
+
+  // Đồng bộ sang Google Sheets (fire-and-forget)
+  sheetsAddCodes(config.sheetsWebhookUrl, generated)
 
   return { codes: generated }
 })
