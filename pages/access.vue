@@ -46,19 +46,19 @@ async function submit() {
       </div>
       <Transition name="fade">
         <div v-if="showLangDropdown" class="lang-dropdown">
-          <div class="lang-option" :class="{ active: lang === 'ja' }" @click="selectLang('ja')">
+          <div class="lang-option" :class="{ active: lang === 'ja' }" @click.stop="selectLang('ja')">
             <div class="flag-circle"><img src="/nhat.png" alt="JP" class="flag-icon" /></div>
             <span class="lang-text">日本語</span>
           </div>
-          <div class="lang-option" :class="{ active: lang === 'en' }" @click="selectLang('en')">
+          <div class="lang-option" :class="{ active: lang === 'en' }" @click.stop="selectLang('en')">
             <div class="flag-circle"><img src="/anh.png" alt="EN" class="flag-icon" /></div>
             <span class="lang-text">English</span>
           </div>
-          <div class="lang-option" :class="{ active: lang === 'vi' }" @click="selectLang('vi')">
+          <div class="lang-option" :class="{ active: lang === 'vi' }" @click.stop="selectLang('vi')">
             <div class="flag-circle"><img src="/viet.png" alt="VI" class="flag-icon" /></div>
             <span class="lang-text">Tiếng Việt</span>
           </div>
-          <div class="lang-option" :class="{ active: lang === 'my' }" @click="selectLang('my')">
+          <div class="lang-option" :class="{ active: lang === 'my' }" @click.stop="selectLang('my')">
             <div class="flag-circle"><img src="/myanma.png" alt="MY" class="flag-icon" /></div>
             <span class="lang-text">မြန်မာ</span>
           </div>
@@ -121,7 +121,7 @@ async function submit() {
   align-items: center;
   justify-content: center;
   background: #0f0f1a;
-  padding: 1rem;
+  padding: 4.5rem 1rem 1rem;
   overflow: hidden;
 }
 
