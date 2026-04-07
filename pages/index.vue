@@ -443,16 +443,17 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 0.6rem;
-  background: #ffffff;
+  background: transparent;
   padding: 0.35rem 0.6rem 0.35rem 0.4rem;
   border-radius: 50px;
   cursor: pointer;
-  border: 2px solid #d97706; /* Viền cam */
-  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.4);
-  transition: transform 0.2s;
+  border: 2px solid #f59e0b; /* Viền cam sáng hơn xíu */
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+  transition: transform 0.2s, background 0.2s;
 }
 .current-lang:hover {
   transform: scale(1.05);
+  background: rgba(255,255,255,0.05);
 }
 .flag-circle {
   width: 32px;
@@ -475,7 +476,7 @@ body {
 .chevron {
   width: 18px;
   height: 18px;
-  color: #064e3b; /* Máu xanh đậm */
+  color: #10b981; /* Xanh ngọc lục bảo để nổi bật trên nền xanh đen */
   transition: transform 0.3s ease;
   margin-right: 0.2rem;
 }
