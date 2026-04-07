@@ -6,11 +6,20 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 401, message: 'Unauthorized' })
   }
 
-  const { getSheetsWebhookUrl } = await import('~/server/utils/sheets')
-  const webhookUrl = getSheetsWebhookUrl(event)
+  // Debug: in ra tất cả env vars để xem CF có inject không
+  const cfEnv = event.context.cloudflare?.env as any
+  const allKeys = cfEnv ? Object.keys(cfEnv) : []
+
+  const webhookUrl = cfEnv?.SHEETS_WEBHOOK_URL || cfEnv?.NUXT_SHEETS_WEBHOOK_URL || config.sheetsWebhookUrl || ''
 
   if (!webhookUrl) {
-    return { ok: false, error: 'SHEETS_WEBHOOK_URL chưa được cấu hình', webhookUrl: null }
+    return {
+      ok: false,
+      error: 'SHEETS_WEBHOOK_URL chưa được cấu hình',
+      webhookUrl: null,
+      cfEnvKeys: allKeys, // Hiển thị danh sách env keys để debug
+      runtimeConfigUrl: config.sheetsWebhookUrl ? 'CÓ (qua runtimeConfig)' : 'KHÔNG'
+    }
   }
 
   try {
