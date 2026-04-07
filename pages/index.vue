@@ -36,12 +36,40 @@ function drawWheel(angle = 0) {
   const ctx = canvas.getContext('2d')!
   const cx = canvas.width / 2
   const cy = canvas.height / 2
-  const r = cx - 10
+  const r = cx - 20 // Make room for outer rim
   ctx.clearRect(0, 0, canvas.width, canvas.height)
 
+  // Outer decorative rim with lights
   ctx.save()
-  ctx.shadowColor = 'rgba(0,0,0,0.18)'
-  ctx.shadowBlur = 18
+  ctx.beginPath()
+  ctx.arc(cx, cy, r + 16, 0, Math.PI * 2)
+  ctx.fillStyle = '#0f172a'
+  ctx.fill()
+  
+  ctx.lineWidth = 4
+  ctx.strokeStyle = '#fbbf24'
+  ctx.stroke()
+
+  // Draw 24 lights
+  for (let i = 0; i < 24; i++) {
+    const dotA = (i * Math.PI * 2) / 24
+    const dx = cx + (r + 8) * Math.cos(dotA)
+    const dy = cy + (r + 8) * Math.sin(dotA)
+    ctx.beginPath()
+    ctx.arc(dx, dy, 4.5, 0, Math.PI * 2)
+    // Make them blink based on rotation angle!
+    const isLit = (Math.floor((angle * 8) + i) % 2) === 0
+    ctx.fillStyle = isLit ? '#ffffff' : '#f59e0b'
+    ctx.shadowColor = isLit ? '#ffffff' : 'transparent'
+    ctx.shadowBlur = isLit ? 6 : 0
+    ctx.fill()
+  }
+  ctx.restore()
+
+  // Inner white circle base
+  ctx.save()
+  ctx.shadowColor = 'rgba(0,0,0,0.4)'
+  ctx.shadowBlur = 12
   ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill()
   ctx.restore()
 
@@ -61,23 +89,59 @@ function drawWheel(angle = 0) {
     ctx.rotate(angle + seg.start + seg.sweep / 2)
     ctx.textAlign = 'right'
     ctx.fillStyle = '#fff'
-    ctx.font = `bold ${seg.sweep > 0.4 ? 14 : 11}px sans-serif`
-    ctx.shadowColor = 'rgba(0,0,0,0.4)'
-    ctx.shadowBlur = 3
-    const label = seg.name.length > 14 ? seg.name.slice(0, 13) + '…' : seg.name
-    ctx.fillText(label, r - 14, 5)
+    ctx.shadowColor = 'rgba(0,0,0,0.5)'
+    ctx.shadowBlur = 4
+    
+    // Dynamic text sizing & wrapping
+    const fontSize = seg.sweep > 0.35 ? 13 : 11
+    ctx.font = `bold ${fontSize}px sans-serif`
+    
+    // Split full name into multiple lines if too long
+    const words = seg.name.split(' ')
+    const lines = []
+    let currentLine = words[0] || ''
+    
+    for (let j = 1; j < words.length; j++) {
+      const testLine = currentLine + ' ' + words[j]
+      if (ctx.measureText(testLine).width > 110) {
+        lines.push(currentLine)
+        currentLine = words[j]
+      } else {
+        currentLine = testLine
+      }
+    }
+    lines.push(currentLine)
+    
+    const lineHeight = fontSize * 1.4
+    const startY = 0 - ((lines.length - 1) * lineHeight) / 2 + (fontSize / 3)
+    
+    lines.forEach((line, idx) => {
+      // maxWidth=135 fits nicely inside the radius
+      ctx.fillText(line, r - 15, startY + idx * lineHeight, 135)
+    })
     ctx.restore()
   })
 
+  // Center button overlay
+  ctx.save()
   ctx.beginPath()
-  ctx.arc(cx, cy, 24, 0, Math.PI * 2)
+  ctx.arc(cx, cy, 32, 0, Math.PI * 2)
+  ctx.fillStyle = '#ffffff'
+  ctx.shadowColor = 'rgba(0,0,0,0.5)'
+  ctx.shadowBlur = 8
+  ctx.fill()
+
+  ctx.beginPath()
+  ctx.arc(cx, cy, 26, 0, Math.PI * 2)
   ctx.fillStyle = '#1e293b'
   ctx.fill()
-  ctx.fillStyle = '#fff'
-  ctx.font = 'bold 13px sans-serif'
+  
+  ctx.fillStyle = '#fbbf24'
+  ctx.font = 'bold 14px sans-serif'
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
   ctx.fillText('QUAY', cx, cy)
+  ctx.restore()
 }
 
 async function spin() {
@@ -218,17 +282,19 @@ watch(segments, () => {
   gap: 1.5rem;
 }
 .pointer {
-  font-size: 2rem;
-  color: #fbbf24;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+  font-size: 2.5rem;
+  color: #ef4444;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6));
   line-height: 1;
   z-index: 2;
-  margin-bottom: -1.5rem;
+  margin-bottom: -1.7rem;
+  position: relative;
+  top: 8px;
 }
 .canvas {
   border-radius: 50%;
   cursor: pointer;
-  box-shadow: 0 0 40px rgba(251,191,36,0.25), 0 8px 32px rgba(0,0,0,0.4);
+  box-shadow: 0 0 50px rgba(251,191,36,0.35), 0 10px 40px rgba(0,0,0,0.6);
   max-width: 92vw;
 }
 .spin-btn {
