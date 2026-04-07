@@ -13,6 +13,17 @@ export default defineEventHandler(async (event) => {
 
   const { DB } = event.context.cloudflare.env
 
+  // Tự tạo bảng nếu chưa có
+  await DB.prepare(`
+    CREATE TABLE IF NOT EXISTS admin_accounts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      email TEXT UNIQUE NOT NULL,
+      password_hash TEXT NOT NULL,
+      is_superadmin INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT DEFAULT (datetime('now'))
+    )
+  `).run()
+
   // Auto-seed super admin nếu bảng còn trống
   const count = await DB.prepare('SELECT COUNT(*) as c FROM admin_accounts').first<{ c: number }>()
   if ((count?.c ?? 0) === 0) {
