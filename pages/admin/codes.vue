@@ -66,7 +66,10 @@ async function deleteCode(id: number) {
           <tr v-for="c in codes" :key="c.id">
             <td><code>{{ c.code }}</code></td>
             <td>{{ c.label || '—' }}</td>
-            <td><span :class="c.active ? 'badge active' : 'badge inactive'">{{ c.active ? 'Còn hiệu lực' : 'Đã vô hiệu' }}</span></td>
+              <td>
+                <span v-if="c.is_spun" class="badge spun">Đã quay</span>
+                <span v-else :class="c.active ? 'badge active' : 'badge inactive'">{{ c.active ? 'Còn hiệu lực' : 'Đã vô hiệu' }}</span>
+              </td>
             <td>{{ c.created_at }}</td>
             <td><button class="btn-del" @click="deleteCode(c.id)">Xóa</button></td>
           </tr>
@@ -100,6 +103,7 @@ th { color: #64748b; font-weight: 600; }
 td code { background: #f1f5f9; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600; letter-spacing: 0.05em; }
 .badge { padding: 0.25rem 0.6rem; border-radius: 20px; font-size: 0.8rem; font-weight: 500; }
 .badge.active { background: #dcfce7; color: #15803d; }
+.badge.spun { background: #fef3c7; color: #d97706; }
 .badge.inactive { background: #fee2e2; color: #dc2626; }
 .btn-del { background: #fee2e2; color: #dc2626; border: none; padding: 0.3rem 0.7rem; border-radius: 5px; cursor: pointer; font-size: 0.8rem; }
 .btn-del:hover { background: #fecaca; }
