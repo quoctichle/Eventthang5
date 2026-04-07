@@ -35,3 +35,16 @@ export async function sheetsUpdateSpin(webhookUrl: string, code: string, prizeNa
     console.error('[Sheets] Failed to update spin result:', e)
   }
 }
+
+export async function sheetsDeleteCodes(webhookUrl: string, codes: string[]): Promise<void> {
+  if (!webhookUrl || !codes.length) return
+  try {
+    await fetch(webhookUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'delete_codes', codes })
+    })
+  } catch (e) {
+    console.error('[Sheets] Failed to delete codes:', e)
+  }
+}
