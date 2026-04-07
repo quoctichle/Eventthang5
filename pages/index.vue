@@ -10,7 +10,20 @@ const route = useRoute()
 
 // --- Multi-language Support ---
 const lang = ref('ja') // Mặc định tiếng Nhật
+const showLangDropdown = ref(false)
 const translatedPrizes = ref<any[]>([])
+
+const flags: Record<string, string> = {
+  ja: '/nhat.png',
+  en: '/anh.png',
+  vi: '/viet.png',
+  my: '/myanma.png'
+}
+
+function selectLang(l: string) {
+  lang.value = l
+  showLangDropdown.value = false
+}
 
 const i18n = {
   ja: {
@@ -327,11 +340,27 @@ watch(segments, () => {
 
 <template>
   <div class="wheel-page">
-    <div class="lang-switcher">
-      <button :class="{ active: lang === 'ja' }" @click="lang = 'ja'">🇯🇵 JP</button>
-      <button :class="{ active: lang === 'en' }" @click="lang = 'en'">🇬🇧 EN</button>
-      <button :class="{ active: lang === 'vi' }" @click="lang = 'vi'">🇻🇳 VI</button>
-      <button :class="{ active: lang === 'my' }" @click="lang = 'my'">🇲🇲 MY</button>
+    <div class="lang-switcher" @click.stop="showLangDropdown = !showLangDropdown">
+      <div class="current-lang">
+        <img :src="flags[lang]" alt="Language" class="flag-icon" />
+        <span class="arrow">▼</span>
+      </div>
+      <Transition name="fade">
+        <div v-if="showLangDropdown" class="lang-dropdown">
+          <div class="lang-option" @click="selectLang('ja')" v-show="lang !== 'ja'">
+            <img src="/nhat.png" alt="JP" class="flag-icon" />
+          </div>
+          <div class="lang-option" @click="selectLang('en')" v-show="lang !== 'en'">
+            <img src="/anh.png" alt="EN" class="flag-icon" />
+          </div>
+          <div class="lang-option" @click="selectLang('vi')" v-show="lang !== 'vi'">
+            <img src="/viet.png" alt="VI" class="flag-icon" />
+          </div>
+          <div class="lang-option" @click="selectLang('my')" v-show="lang !== 'my'">
+            <img src="/myanma.png" alt="MY" class="flag-icon" />
+          </div>
+        </div>
+      </Transition>
     </div>
 
     <h1 class="title">🎡 {{ t.title }}</h1>
@@ -400,25 +429,55 @@ body {
   position: absolute;
   top: 1rem;
   right: 1rem;
-  display: flex;
-  gap: 0.5rem;
   z-index: 10;
+  user-select: none;
 }
-.lang-switcher button {
-  background: rgba(255,255,255,0.1);
-  color: white;
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 4px;
-  padding: 0.4rem 0.6rem;
-  font-size: 0.8rem;
+.current-lang {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(255,255,255,0.15);
+  padding: 0.5rem 0.8rem;
+  border-radius: 50px;
   cursor: pointer;
-  transition: all 0.2s;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,0.2);
+  transition: background 0.2s;
 }
-.lang-switcher button.active, .lang-switcher button:hover {
-  background: rgba(255,255,255,0.9);
-  color: #1e293b;
-  border-color: white;
-  font-weight: bold;
+.current-lang:hover {
+  background: rgba(255,255,255,0.25);
+}
+.flag-icon {
+  width: 24px;
+  height: 16px;
+  object-fit: cover;
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+.arrow {
+  color: white;
+  font-size: 0.7rem;
+}
+.lang-dropdown {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+}
+.lang-option {
+  padding: 0.6rem 1.2rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.lang-option:hover {
+  background: #f1f5f9;
 }
 .title {
   font-size: clamp(1.8rem, 6vw, 2.8rem);
