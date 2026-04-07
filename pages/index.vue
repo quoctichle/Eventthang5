@@ -318,6 +318,8 @@ async function spin() {
         }
         // Các lỗi khác bỏ qua vì kết quả đã hiển thị
       })
+}
+
 onMounted(() => {
   drawWheel(currentAngle)
   // Tự hiển popup nếu đã quay rồi
