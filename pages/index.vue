@@ -22,12 +22,12 @@ const alreadySpun = ref(spinData.value?.spun ?? false)
 let currentAngle = 0
 
 const segments = computed(() => {
-  const list = (prizes.value ?? []).filter((p: any) => p.quantity > 0)
+  const list = prizes.value ?? []
   if (!list.length) return []
-  const total = list.reduce((s: number, p: any) => s + p.quantity, 0)
+  const sweep = (Math.PI * 2) / list.length
   let start = 0
   return list.map((p: any, i: number) => {
-    const sweep = (p.quantity / total) * Math.PI * 2
+    // Luôn hiện đủ tất cả giải thưởng, chia độ rộng bằng nhau
     const seg = { ...p, start, sweep, color: COLORS[i % COLORS.length] }
     start += sweep
     return seg
@@ -150,14 +150,22 @@ function drawWheel(angle = 0) {
 
 async function spin() {
   if (spinning.value || alreadySpun.value || !segments.value.length) return
+  
+  // Xác định danh sách các giải thưởng còn suất (số lượng > 0)
+  const availablePrizes = segments.value.filter(seg => seg.quantity > 0)
+  if (!availablePrizes.length) {
+    alert('Đã hết giải thưởng tặng kèm!')
+    return
+  }
+
   spinning.value = true
   showResult.value = false
 
-  // Weighted random pick
-  const total = segments.value.reduce((s, seg) => s + seg.quantity, 0)
+  // Weighted random pick (Dựa theo số lượng suất còn lại của availablePrizes)
+  const total = availablePrizes.reduce((s, seg) => s + seg.quantity, 0)
   let rand = Math.random() * total
-  let winner = segments.value[0]
-  for (const seg of segments.value) {
+  let winner = availablePrizes[0]
+  for (const seg of availablePrizes) {
     rand -= seg.quantity
     if (rand <= 0) { winner = seg; break }
   }
