@@ -25,8 +25,11 @@ export default defineEventHandler(async (event) => {
   const prize = await DB.prepare('SELECT name FROM prizes WHERE id = ?').bind(prize_id).first()
   const prizeName = (prize?.name as string) ?? ''
 
-  // Đồng bộ kết quả quay sang Google Sheets (fire-and-forget)
-  sheetsUpdateSpin(config.sheetsWebhookUrl, code, prizeName)
+  // Đồng bộ kết quả quay sang Google Sheets - dùng waitUntil để CF Worker không bị kill trước khi fetch xong
+  const webhookUrl = (config.sheetsWebhookUrl || (event.context.cloudflare?.env as any)?.SHEETS_WEBHOOK_URL) as string
+  if (webhookUrl) {
+    event.context.cloudflare.ctx.waitUntil(sheetsUpdateSpin(webhookUrl, code, prizeName))
+  }
 
   return { success: true, prize_name: prizeName }
 })
