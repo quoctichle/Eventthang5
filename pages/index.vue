@@ -1,4 +1,8 @@
 <script setup lang="ts">
+definePageMeta({
+  layout: false
+})
+
 const { data: prizes } = await useFetch<any[]>('/api/prizes')
 const { data: spinData } = await useFetch<{ spun: boolean, result: any }>('/api/spin-result')
 
@@ -253,26 +257,45 @@ watch(segments, () => {
   </div>
 </template>
 
+<style>
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: #1e293b; /* Fallback for safe areas on mobile devices */
+}
+</style>
+
 <style scoped>
 .wheel-page {
-  min-height: 80vh;
+  min-height: 100vh; /* changed from 80vh to 100vh for full screen */
   display: flex;
   flex-direction: column;
+  justify-content: center; /* helps centering vertically on mobile */
   align-items: center;
   padding: 2rem 1rem;
   background: linear-gradient(160deg, #1e293b 0%, #312e81 100%);
 }
 .title {
-  font-size: 2rem;
+  font-size: clamp(1.8rem, 6vw, 2.8rem);
   font-weight: 800;
   color: #fbbf24;
   margin: 0;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-shadow: 0 4px 12px rgba(0,0,0,0.5);
 }
 .subtitle {
-  color: #94a3b8;
-  margin: 0.3rem 0 2rem;
-  font-size: 0.95rem;
+  color: #cbd5e1;
+  margin: 0.5rem 0 2.5rem;
+  font-size: clamp(0.9rem, 3.5vw, 1.1rem);
+  text-align: center;
+  font-weight: 500;
+  letter-spacing: 0.02em;
 }
 .wheel-wrap {
   position: relative;
@@ -294,23 +317,31 @@ watch(segments, () => {
 .canvas {
   border-radius: 50%;
   cursor: pointer;
-  box-shadow: 0 0 50px rgba(251,191,36,0.35), 0 10px 40px rgba(0,0,0,0.6);
-  max-width: 92vw;
+  box-shadow: 0 0 45px rgba(251,191,36,0.4), 0 12px 30px rgba(0,0,0,0.7);
+  max-width: 96vw;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
 }
 .spin-btn {
   background: linear-gradient(135deg, #f97316, #eab308);
   color: white;
   border: none;
-  padding: 0.9rem 2.5rem;
+  padding: 1rem 3rem;
   border-radius: 50px;
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-size: 1.25rem;
+  font-weight: 800;
   cursor: pointer;
-  box-shadow: 0 4px 20px rgba(249,115,22,0.4);
+  box-shadow: 0 6px 25px rgba(249,115,22,0.5);
   letter-spacing: 0.05em;
-  transition: transform 0.1s, box-shadow 0.1s;
+  transition: transform 0.15s, box-shadow 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  margin-top: 1rem;
 }
-.spin-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(249,115,22,0.5); }
+.spin-btn:active:not(:disabled) { transform: scale(0.96) translateY(2px); box-shadow: 0 3px 15px rgba(249,115,22,0.4); }
+.spin-btn:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(249,115,22,0.6); }
 .spin-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 .won-banner {
   display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
