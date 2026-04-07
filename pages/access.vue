@@ -73,21 +73,11 @@ async function submit() {
 
     <!-- Card -->
     <div class="card">
-      <!-- Logo / Brand -->
+      <!-- Logo -->
       <div class="brand">
-        <div class="logo-ring">
-          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="24" cy="24" r="20" stroke="url(#g1)" stroke-width="3"/>
-            <path d="M16 24l5 5 11-10" stroke="url(#g2)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-            <defs>
-              <linearGradient id="g1" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
-                <stop stop-color="#6366f1"/><stop offset="1" stop-color="#a855f7"/>
-              </linearGradient>
-              <linearGradient id="g2" x1="14" y1="18" x2="34" y2="32" gradientUnits="userSpaceOnUse">
-                <stop stop-color="#6366f1"/><stop offset="1" stop-color="#a855f7"/>
-              </linearGradient>
-            </defs>
-          </svg>
+        <div class="logo-wrap">
+          <div class="logo-glow"></div>
+          <img src="/logo.png" alt="Logo" class="logo-img" />
         </div>
       </div>
 
@@ -208,17 +198,40 @@ async function submit() {
   box-shadow: 0 32px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
 }
 
-/* Logo ring */
-.brand { display: flex; justify-content: center; margin-bottom: 1.5rem; }
-.logo-ring {
-  width: 64px; height: 64px;
-  background: rgba(99,102,241,0.15);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  border: 1.5px solid rgba(99,102,241,0.4);
-  box-shadow: 0 0 24px rgba(99,102,241,0.3);
+/* Logo */
+.brand { display: flex; justify-content: center; margin-bottom: 1.75rem; }
+.logo-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.logo-ring svg { width: 32px; height: 32px; }
+.logo-glow {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(99,102,241,0.5) 0%, rgba(168,85,247,0.25) 50%, transparent 70%);
+  animation: pulse-glow 2.5s ease-in-out infinite;
+  pointer-events: none;
+}
+.logo-img {
+  position: relative;
+  z-index: 1;
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 16px rgba(99,102,241,0.6)) drop-shadow(0 0 32px rgba(168,85,247,0.3));
+  animation: float 3s ease-in-out infinite;
+}
+@keyframes pulse-glow {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.2); opacity: 1; }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
 
 h1 {
   font-size: 1.5rem;
