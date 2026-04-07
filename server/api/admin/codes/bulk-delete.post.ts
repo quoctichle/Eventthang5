@@ -28,7 +28,7 @@ export default defineEventHandler(async (event) => {
 
     const winner = await DB.prepare(
       'SELECT id FROM prize_winners WHERE code = ?'
-    ).bind(row.code).first()
+    ).bind(row.code).first<{ id: number }>()
 
     if (winner) {
       skippedCodes.push(row.code)
@@ -45,9 +45,11 @@ export default defineEventHandler(async (event) => {
     await DB.prepare('DELETE FROM access_codes WHERE id = ?').bind(item.id).run()
   }
 
-  // Đồng bộ xóa bên Google Sheets
-  const webhookUrl = getSheetsWebhookUrl(event)
-  await sheetsDeleteCodes(webhookUrl, deletable.map(r => r.code))
+  // Đồng bộ xóa bên Google Sheets (không throw nếu lỗi)
+  try {
+    const webhookUrl = getSheetsWebhookUrl(event)
+    await sheetsDeleteCodes(webhookUrl, deletable.map(r => r.code))
+  } catch {}
 
   return {
     success: true,

@@ -12,19 +12,21 @@ export default defineEventHandler(async (event) => {
   const id = getRouterParam(event, 'id')
 
   // Lấy code value và kiểm tra đã quay chưa
-  const row = await DB.prepare('SELECT code FROM access_codes WHERE id = ?').bind(id).first()
+  const row = await DB.prepare('SELECT code FROM access_codes WHERE id = ?').bind(id).first<{ code: string }>()
   if (!row) throw createError({ statusCode: 404, message: 'Mã không tồn tại' })
 
-  const winner = await DB.prepare('SELECT id FROM prize_winners WHERE code = ?').bind(row.code).first()
+  const winner = await DB.prepare('SELECT id FROM prize_winners WHERE code = ?').bind(row.code).first<{ id: number }>()
   if (winner) {
     throw createError({ statusCode: 400, message: 'Mã này đã được sử dụng để quay, không thể xóa' })
   }
 
   await DB.prepare('DELETE FROM access_codes WHERE id = ?').bind(id).run()
 
-  // Đồng bộ xóa bên Google Sheets
-  const webhookUrl = getSheetsWebhookUrl(event)
-  await sheetsDeleteCodes(webhookUrl, [row.code as string])
+  // Đồng bộ xóa bên Google Sheets (không throw nếu lỗi)
+  try {
+    const webhookUrl = getSheetsWebhookUrl(event)
+    await sheetsDeleteCodes(webhookUrl, [row.code])
+  } catch {}
 
   return { success: true }
 })
