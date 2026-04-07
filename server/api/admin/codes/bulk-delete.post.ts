@@ -27,7 +27,7 @@ export default defineEventHandler(async (event) => {
     if (!row) continue
 
     const winner = await DB.prepare(
-      'SELECT id FROM prize_winners WHERE code = ?'
+      'SELECT id FROM prize_winners WHERE winner_code = ?'
     ).bind(row.code).first<{ id: number }>()
 
     if (winner) {

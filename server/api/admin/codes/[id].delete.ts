@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
   const row = await DB.prepare('SELECT code FROM access_codes WHERE id = ?').bind(id).first<{ code: string }>()
   if (!row) throw createError({ statusCode: 404, message: 'Mã không tồn tại' })
 
-  const winner = await DB.prepare('SELECT id FROM prize_winners WHERE code = ?').bind(row.code).first<{ id: number }>()
+  const winner = await DB.prepare('SELECT id FROM prize_winners WHERE winner_code = ?').bind(row.code).first<{ id: number }>()
   if (winner) {
     throw createError({ statusCode: 400, message: 'Mã này đã được sử dụng để quay, không thể xóa' })
   }
