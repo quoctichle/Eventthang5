@@ -13,25 +13,30 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, message: 'Không có mã nào được chọn' })
   }
 
-  // Lấy thông tin và kiểm tra đã quay
-  const placeholders = ids.map(() => '?').join(',')
-  const rows = await DB.prepare(
-    `SELECT ac.id, ac.code, pw.id as winner_id
-     FROM access_codes ac
-     LEFT JOIN prize_winners pw ON pw.code = ac.code
-     WHERE ac.id IN (${placeholders})`
-  ).bind(...ids).all()
+  // Dùng D1 batch để tránh vấn đề với IN clause + spread
+  const selectStmts = ids.map((id: number) =>
+    DB.prepare(
+      `SELECT ac.id, ac.code, pw.id as winner_id
+       FROM access_codes ac
+       LEFT JOIN prize_winners pw ON pw.code = ac.code
+       WHERE ac.id = ?`
+    ).bind(id)
+  )
+  const batchResults = await DB.batch(selectStmts)
+  const allRows = batchResults.flatMap((r: any) => r.results as any[])
 
-  const deletable = (rows.results as any[]).filter(r => !r.winner_id)
-  const skipped = (rows.results as any[]).filter(r => r.winner_id)
+  const deletable = allRows.filter((r: any) => !r.winner_id)
+  const skipped = allRows.filter((r: any) => r.winner_id)
 
   if (deletable.length === 0) {
     throw createError({ statusCode: 400, message: 'Tất cả mã được chọn đều đã được sử dụng để quay' })
   }
 
-  const deletableIds = deletable.map((r: any) => r.id)
-  const delPlaceholders = deletableIds.map(() => '?').join(',')
-  await DB.prepare(`DELETE FROM access_codes WHERE id IN (${delPlaceholders})`).bind(...deletableIds).run()
+  // Xóa bằng batch
+  const deleteStmts = deletable.map((r: any) =>
+    DB.prepare('DELETE FROM access_codes WHERE id = ?').bind(r.id)
+  )
+  await DB.batch(deleteStmts)
 
   // Đồng bộ xóa bên Google Sheets
   const webhookUrl = getSheetsWebhookUrl(event)
