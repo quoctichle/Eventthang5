@@ -320,7 +320,7 @@ watch(segments, () => {
     <!-- Vòng quay (chỉ hiện khi chưa quay) -->
     <div v-else-if="translatedPrizes && translatedPrizes.length" class="wheel-wrap">
       <div class="pointer">▼</div>
-      <canvas ref="canvasRef" width="420" height="420" class="canvas" @click="spin" />
+      <canvas ref="canvasRef" width="420" height="420" class="canvas" :class="{ 'is-spinning': spinning }" @click="spin" />
       <button class="spin-btn" :disabled="spinning" @click="spin">
         {{ spinning ? t.spinning : t.spin_now }}
       </button>
@@ -365,6 +365,7 @@ body {
   align-items: center;
   padding: 2rem 1rem;
   background: linear-gradient(160deg, #1e293b 0%, #312e81 100%);
+  overflow: hidden;
 }
 .lang-switcher {
   position: absolute;
@@ -463,6 +464,7 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   text-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  animation: title-enter 0.8s cubic-bezier(0.34,1.56,0.64,1) both;
 }
 .subtitle {
   color: #cbd5e1;
@@ -471,6 +473,7 @@ body {
   text-align: center;
   font-weight: 500;
   letter-spacing: 0.02em;
+  animation: subtitle-enter 0.8s ease both 0.25s;
 }
 .wheel-wrap {
   position: relative;
@@ -488,6 +491,7 @@ body {
   margin-bottom: -1.7rem;
   position: relative;
   top: 8px;
+  animation: bounce-ptr 1.4s ease-in-out infinite;
 }
 .canvas {
   border-radius: 50%;
@@ -498,6 +502,10 @@ body {
   aspect-ratio: 1 / 1;
   touch-action: none;
   -webkit-tap-highlight-color: transparent;
+  animation: canvas-glow 3s ease-in-out infinite;
+}
+.canvas.is-spinning {
+  animation: none;
 }
 .spin-btn {
   background: linear-gradient(135deg, #f97316, #eab308);
@@ -514,6 +522,23 @@ body {
   -webkit-tap-highlight-color: transparent;
   user-select: none;
   margin-top: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+.spin-btn:not(:disabled) {
+  animation: btn-pulse 2.5s ease-in-out infinite;
+}
+.spin-btn::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 50%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+  transform: skewX(-20deg);
+  pointer-events: none;
+}
+.spin-btn:hover:not(:disabled)::after {
+  animation: btn-shine 0.55s ease forwards;
 }
 .spin-btn:active:not(:disabled) { transform: scale(0.96) translateY(2px); box-shadow: 0 3px 15px rgba(249,115,22,0.4); }
 .spin-btn:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(249,115,22,0.6); }
@@ -522,8 +547,9 @@ body {
   display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
   background: rgba(255,255,255,0.08); border: 2px solid rgba(251,191,36,0.5);
   border-radius: 20px; padding: 2.5rem 2rem; max-width: 380px; width: 90%; text-align: center;
+  animation: banner-enter 0.65s cubic-bezier(0.34,1.56,0.64,1) both;
 }
-.won-icon { font-size: 3rem; }
+.won-icon { font-size: 3rem; display: block; animation: icon-bounce 1.2s ease-in-out infinite; }
 .won-title { color: #fbbf24; font-size: 1.1rem; font-weight: 700; }
 .won-prize-name { color: white; font-size: 1.8rem; font-weight: 800; }
 .won-note { color: #94a3b8; font-size: 0.9rem; }
@@ -539,6 +565,7 @@ body {
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.2s;
+  animation: new-code-glow 2.2s ease-in-out infinite;
 }
 .new-code-btn:hover {
   background: rgba(251,191,36,0.1);
@@ -560,13 +587,14 @@ body {
   width: 90%;
   box-shadow: 0 20px 60px rgba(0,0,0,0.3);
 }
-.confetti { font-size: 3rem; }
+.confetti { font-size: 3rem; display: block; animation: confetti-bounce 0.7s cubic-bezier(0.34,1.56,0.64,1) both; }
 .modal h2 { font-size: 1.5rem; color: #1e293b; margin: 0.5rem 0; }
 .prize-name {
   font-size: 1.4rem;
   font-weight: 800;
   color: #f97316;
   margin: 0.5rem 0;
+  animation: prize-glow 1.8s ease-in-out infinite;
 }
 .prize-note { color: #64748b; font-size: 0.9rem; margin-bottom: 1rem; }
 .close-btn {
@@ -577,10 +605,70 @@ body {
 .close-btn:hover { background: #334155; }
 
 /* Transition */
-.pop-enter-active { animation: pop-in 0.3s ease; }
+.pop-enter-active { animation: pop-in 0.4s cubic-bezier(0.34,1.56,0.64,1); }
 .pop-leave-active { animation: pop-in 0.2s ease reverse; }
 @keyframes pop-in {
-  from { opacity: 0; transform: scale(0.8); }
-  to   { opacity: 1; transform: scale(1); }
+  from { opacity: 0; transform: scale(0.7) translateY(20px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Title / subtitle entrance */
+@keyframes title-enter {
+  from { opacity: 0; transform: translateY(-28px) scale(0.85); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes subtitle-enter {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Pointer bounce */
+@keyframes bounce-ptr {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-9px); }
+}
+
+/* Canvas glow pulse */
+@keyframes canvas-glow {
+  0%, 100% { box-shadow: 0 0 45px rgba(251,191,36,0.4), 0 12px 30px rgba(0,0,0,0.7); }
+  50%       { box-shadow: 0 0 75px rgba(251,191,36,0.65), 0 0 35px rgba(168,85,247,0.3), 0 12px 30px rgba(0,0,0,0.7); }
+}
+
+/* Spin button pulse */
+@keyframes btn-pulse {
+  0%, 100% { box-shadow: 0 6px 25px rgba(249,115,22,0.5); }
+  50%       { box-shadow: 0 6px 42px rgba(249,115,22,0.85), 0 0 22px rgba(234,179,8,0.4); }
+}
+@keyframes btn-shine { to { left: 130%; } }
+
+/* Won banner entrance */
+@keyframes banner-enter {
+  from { opacity: 0; transform: scale(0.78) translateY(32px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Won icon bounce */
+@keyframes icon-bounce {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  25%       { transform: scale(1.25) rotate(-12deg); }
+  75%       { transform: scale(1.15) rotate(12deg); }
+}
+
+/* New code button glow */
+@keyframes new-code-glow {
+  0%, 100% { box-shadow: 0 0 0 rgba(251,191,36,0); }
+  50%       { box-shadow: 0 0 22px rgba(251,191,36,0.4); }
+}
+
+/* Confetti bounce */
+@keyframes confetti-bounce {
+  from { transform: scale(0) rotate(-180deg); }
+  to   { transform: scale(1) rotate(0deg); }
+}
+
+/* Prize glow */
+@keyframes prize-glow {
+  0%, 100% { text-shadow: none; }
+  50%       { text-shadow: 0 0 22px rgba(249,115,22,0.55); }
 }
 </style>

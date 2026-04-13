@@ -70,7 +70,7 @@ async function submit() {
       </Transition>
     </div>
 
-    <!-- Background decoration -->
+    <!-- Background orbs -->
     <div class="bg-orb orb1"></div>
     <div class="bg-orb orb2"></div>
     <div class="bg-orb orb3"></div>
@@ -148,9 +148,9 @@ html, body {
   pointer-events: none;
   opacity: 0.25;
 }
-.orb1 { width: 500px; height: 500px; background: #6366f1; top: -150px; left: -150px; }
-.orb2 { width: 400px; height: 400px; background: #a855f7; bottom: -100px; right: -100px; }
-.orb3 { width: 300px; height: 300px; background: #3b82f6; top: 40%; left: 50%; transform: translate(-50%, -50%); opacity: 0.15; }
+.orb1 { width: 500px; height: 500px; background: #6366f1; top: -150px; left: -150px; animation: orb-float1 13s ease-in-out infinite; }
+.orb2 { width: 400px; height: 400px; background: #a855f7; bottom: -100px; right: -100px; animation: orb-float2 16s ease-in-out infinite; }
+.orb3 { width: 300px; height: 300px; background: #3b82f6; top: 40%; left: 50%; transform: translate(-50%, -50%); opacity: 0.15; animation: orb-float3 10s ease-in-out infinite; }
 
 /* Language switcher */
 .lang-switcher {
@@ -211,6 +211,7 @@ html, body {
   padding: 2.5rem 2rem 2rem;
   text-align: center;
   box-shadow: 0 32px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+  animation: card-enter 0.7s cubic-bezier(0.34,1.56,0.64,1) both;
 }
 
 /* Logo */
@@ -298,6 +299,7 @@ input {
 input::placeholder { color: rgba(255,255,255,0.3); letter-spacing: 0.05em; font-weight: 400; text-transform: none; }
 input:focus { border-color: transparent; background: rgba(255,255,255,0.09); }
 input:disabled { opacity: 0.5; }
+.has-error { animation: shake 0.5s ease; }
 .has-error input { border-color: #f87171; }
 
 /* Error */
@@ -334,6 +336,20 @@ input:disabled { opacity: 0.5; }
   letter-spacing: 0.02em;
   box-shadow: 0 8px 24px rgba(99,102,241,0.4);
   transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.submit-btn::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 55%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
+  transform: skewX(-20deg);
+  pointer-events: none;
+}
+.submit-btn:hover:not(:disabled)::after {
+  animation: btn-shine 0.55s ease forwards;
 }
 .submit-btn:hover:not(:disabled) {
   opacity: 0.92;
@@ -356,4 +372,39 @@ input:disabled { opacity: 0.5; }
 /* Transitions */
 .fade-enter-active, .fade-leave-active { transition: opacity 0.15s, transform 0.15s; }
 .fade-enter-from, .fade-leave-to { opacity: 0; transform: translateY(-6px); }
+
+/* Orb float animations */
+@keyframes orb-float1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%  { transform: translate(45px, -35px) scale(1.06); }
+  66%  { transform: translate(-25px, 45px) scale(0.94); }
+}
+@keyframes orb-float2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(-55px, -45px) scale(1.12); }
+}
+@keyframes orb-float3 {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50%  { transform: translate(-50%, -50%) scale(1.45); }
+}
+
+/* Card entrance */
+@keyframes card-enter {
+  from { opacity: 0; transform: translateY(44px) scale(0.91); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Input shake on error */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  15%  { transform: translateX(-7px); }
+  30%  { transform: translateX(7px); }
+  45%  { transform: translateX(-5px); }
+  60%  { transform: translateX(5px); }
+  75%  { transform: translateX(-2px); }
+  90%  { transform: translateX(2px); }
+}
+
+/* Button shine sweep */
+@keyframes btn-shine { to { left: 130%; } }
 </style>
