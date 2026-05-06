@@ -298,23 +298,10 @@ html, body {
     #2bae39 78%, 
     #2bae39 100%
   );
-  padding: 0.35rem 2.2rem;
-  transform: rotate(-1.5deg);
-  filter: drop-shadow(2px 6px 4px rgba(0,0,0,0.25));
-  clip-path: polygon(
-    6px 0%, 
-    100% 0%, 
-    calc(100% - 8px) 18%, 
-    100% 32%, 
-    calc(100% - 10px) 68%, 
-    100% 88%, 
-    calc(100% - 4px) 100%, 
-    8px 100%, 
-    12px 80%, 
-    0% 55%, 
-    10px 35%, 
-    2px 15%
-  );
+  padding: 0.5rem 2.2rem 0.5rem;
+  transform: rotate(-1.5deg) skewX(-14deg);
+  border-radius: 2px;
+  box-shadow: 3px 5px 10px rgba(0, 0, 0, 0.3);
 }
 .splash-t2 {
   font-family: 'FSMagistral', sans-serif;
@@ -325,11 +312,14 @@ html, body {
   text-transform: uppercase;
   text-align: center;
   letter-spacing: 0.02em;
+  transform: skewX(14deg); /* Counter-skew */
   text-shadow: 
-    1px 1px 0 #1b8726,
-    2px 2px 0 #1b8726,
-    3px 3px 0 #1b8726,
-    4px 4px 6px rgba(0,0,0,0.3);
+    1px 1px 0 #00220a,
+    2px 2px 0 #00220a,
+    3px 3px 0 #00220a,
+    4px 4px 0 #00220a,
+    5px 5px 0 #00220a,
+    5px 6px 8px rgba(0,0,0,0.5);
 }
 
 /* Mobile start button */
