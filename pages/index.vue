@@ -6,9 +6,6 @@ definePageMeta({
 const { data: prizes } = await useFetch<any[]>('/api/prizes')
 const { data: spinData } = await useFetch<{ spun: boolean, result: any }>('/api/spin-result')
 
-const route = useRoute()
-
-// --- Multi-language Support (shared via composable) ---
 const lang = useLang()
 const showLangDropdown = ref(false)
 const translatedPrizes = ref<any[]>([])
@@ -20,22 +17,21 @@ function selectLang(l: typeof lang.value) {
 
 const t = computed(() => i18nData[lang.value])
 
-// Translation API for dynamic text (Prizes from DB)
 async function translateText(text: string, targetLang: string) {
   if (!text) return ''
-  if (targetLang === 'vi') return text // Source is vi
+  if (targetLang === 'vi') return text
   try {
     const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=vi&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`)
     const data = await res.json()
     return data[0].map((x: any) => x[0]).join('')
-  } catch (e) {
-    return text // Fallback to original
+  } catch {
+    return text
   }
 }
 
 watch([lang, prizes], async () => {
   if (!prizes.value) return
-  
+
   if (lang.value === 'vi') {
     translatedPrizes.value = JSON.parse(JSON.stringify(prizes.value))
     return
@@ -49,12 +45,16 @@ watch([lang, prizes], async () => {
   }
   translatedPrizes.value = translatedList
 }, { immediate: true })
-// -----------------------------
 
 const COLORS = [
-  '#f97316','#eab308','#22c55e','#06b6d4','#6366f1',
-  '#ec4899','#ef4444','#84cc16','#14b8a6','#a855f7',
-  '#f59e0b','#10b981','#3b82f6','#e11d48','#8b5cf6'
+  '#25be07',
+  '#ff9d18',
+  '#39cb09',
+  '#ffd21a',
+  '#a9d100',
+  '#ff7b12',
+  '#cde000',
+  '#ffb31e'
 ]
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
@@ -68,9 +68,9 @@ const segments = computed(() => {
   const list = translatedPrizes.value ?? []
   if (!list.length) return []
   const sweep = (Math.PI * 2) / list.length
-  let start = 0
+  // Bắt đầu từ trục dọc trên cùng (-90 độ), lùi về một nửa sweep để đặt đúng tâm giải đầu tiên vào múi chỉ
+  let start = -Math.PI / 2 - sweep / 2
   return list.map((p: any, i: number) => {
-    // Luôn hiện đủ tất cả giải thưởng, chia độ rộng bằng nhau
     const seg = { ...p, start, sweep, color: COLORS[i % COLORS.length] }
     start += sweep
     return seg
@@ -83,71 +83,142 @@ function drawWheel(angle = 0) {
   const ctx = canvas.getContext('2d')!
   const cx = canvas.width / 2
   const cy = canvas.height / 2
-  const r = cx - 20 // Make room for outer rim
+  
+  const R_out = cx - 1 // Draw to the very edge of the canvas to avoid transparent gaps
+  const R_mid = R_out - 6 // Thick dark rim starts here
+  const R_in = R_mid - 26 // Inner ring
+  
   ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-  // Outer decorative rim with lights
+  // Rims
   ctx.save()
+  ctx.translate(cx, cy)
+  
+  // Layer 1: Outermost thin gradient rim
   ctx.beginPath()
-  ctx.arc(cx, cy, r + 16, 0, Math.PI * 2)
-  ctx.fillStyle = '#0f172a'
+  ctx.arc(0, 0, R_out, 0, Math.PI * 2)
+  const gradOut = ctx.createLinearGradient(0, -R_out, 0, R_out)
+  gradOut.addColorStop(0, '#cff222') // Bright yellow-green top
+  gradOut.addColorStop(1, '#1fa80d') // Deep green bottom
+  ctx.fillStyle = gradOut
+  ctx.fill()
+
+  // Layer 2: Thick dark green rim
+  ctx.beginPath()
+  ctx.arc(0, 0, R_mid, 0, Math.PI * 2)
+  ctx.fillStyle = '#005b22'
   ctx.fill()
   
-  ctx.lineWidth = 4
-  ctx.strokeStyle = '#fbbf24'
-  ctx.stroke()
+  // Inner gradient shadow overlay for the thick dark green rim (for 3D depth)
+  ctx.beginPath()
+  ctx.arc(0, 0, R_mid, 0, Math.PI * 2)
+  const thickRimShadow = ctx.createRadialGradient(0, 0, R_in, 0, 0, R_mid)
+  thickRimShadow.addColorStop(0, 'rgba(0,0,0,0.3)') // Giảm nửa độ đậm
+  thickRimShadow.addColorStop(0.5, 'rgba(0,0,0,0)')
+  ctx.fillStyle = thickRimShadow
+  ctx.fill()
 
-  // Draw 24 lights
-  for (let i = 0; i < 24; i++) {
-    const dotA = (i * Math.PI * 2) / 24
-    const dx = cx + (r + 8) * Math.cos(dotA)
-    const dy = cy + (r + 8) * Math.sin(dotA)
-    ctx.beginPath()
-    ctx.arc(dx, dy, 4.5, 0, Math.PI * 2)
-    // Make them blink based on rotation angle!
-    const isLit = (Math.floor((angle * 8) + i) % 2) === 0
-    ctx.fillStyle = isLit ? '#ffffff' : '#f59e0b'
-    ctx.shadowColor = isLit ? '#ffffff' : 'transparent'
-    ctx.shadowBlur = isLit ? 6 : 0
-    ctx.fill()
-  }
+  // Layer 3: Thin inner yellow/gold edge bounding the slices
+  ctx.beginPath()
+  ctx.arc(0, 0, R_in + 3, 0, Math.PI * 2)
+  ctx.fillStyle = '#ffcc00'
+  ctx.fill()
+  
   ctx.restore()
 
-  // Inner white circle base
+  // Slices
   ctx.save()
-  ctx.shadowColor = 'rgba(0,0,0,0.4)'
-  ctx.shadowBlur = 12
-  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill()
-  ctx.restore()
+  ctx.translate(cx, cy)
+  ctx.beginPath()
+  ctx.arc(0, 0, R_in, 0, Math.PI * 2)
+  ctx.clip()
 
-  segments.value.forEach(seg => {
+  const sliceColors = [
+    { baseL: '#fecf19', baseD: '#f3aa16', kiteL: '#ffb515', kiteD: '#ec8c05' }, // Gold/Yellow (nhẹ hơn)
+    { baseL: '#8aea2b', baseD: '#6bc700', kiteL: '#70cb0e', kiteD: '#55bb0b' }, // Light Green (nhẹ hơn)
+    { baseL: '#ffbb28', baseD: '#f09020', kiteL: '#f09020', kiteD: '#d96403' }, // Orange (nhẹ hơn)
+    { baseL: '#4cc90c', baseD: '#14a818', kiteL: '#46b20a', kiteD: '#119114' }  // Dark Green (nhẹ hơn)
+  ]
+
+  segments.value.forEach((seg, idx) => {
+    const c = sliceColors[idx % sliceColors.length]
+
+    ctx.save()
+    ctx.rotate(angle)
+
+    // Base slice background (Lighter Gradient)
     ctx.beginPath()
-    ctx.moveTo(cx, cy)
-    ctx.arc(cx, cy, r, angle + seg.start, angle + seg.start + seg.sweep)
+    ctx.moveTo(0, 0)
+    ctx.arc(0, 0, R_in, seg.start, seg.start + seg.sweep)
     ctx.closePath()
-    ctx.fillStyle = seg.color
+    const baseGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, R_in)
+    baseGrad.addColorStop(0, c.baseL)
+    baseGrad.addColorStop(1, c.baseD)
+    ctx.fillStyle = baseGrad
     ctx.fill()
-    ctx.strokeStyle = '#fff'
-    ctx.lineWidth = 2
+
+    // Kite shape extending from the center (Darker Gradient)
+    const mid = seg.start + seg.sweep / 2
+    ctx.beginPath()
+    ctx.moveTo(0, 0)
+    ctx.lineTo(Math.cos(seg.start) * R_in * 0.333, Math.sin(seg.start) * R_in * 0.333) // Mở rộng đáy bắt đầu từ 1/3 bán kính
+    ctx.lineTo(Math.cos(mid) * R_in * 0.95, Math.sin(mid) * R_in * 0.95) // Đỉnh tam giác thu lại một chút (0.95) để không quá sát
+    ctx.lineTo(Math.cos(seg.start + seg.sweep) * R_in * 0.333, Math.sin(seg.start + seg.sweep) * R_in * 0.333)
+    ctx.closePath()
+    const kiteGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, R_in)
+    kiteGrad.addColorStop(0, c.kiteL)
+    kiteGrad.addColorStop(1, c.kiteD)
+    ctx.fillStyle = kiteGrad
+    ctx.fill()
+    ctx.restore()
+  })
+
+  // Shadow inside the slices overlapping from the rim to create inset depth
+  ctx.beginPath()
+  ctx.arc(0, 0, R_in, 0, Math.PI * 2)
+  const sliceShadow = ctx.createRadialGradient(0, 0, R_in * 0.94, 0, 0, R_in)
+  sliceShadow.addColorStop(0, 'rgba(0,0,0,0)')
+  sliceShadow.addColorStop(1, 'rgba(0,0,0,0.25)') // Giảm mạnh độ bóng đen
+  ctx.fillStyle = sliceShadow
+  ctx.fill()
+
+  // Stroke lines between slices
+  segments.value.forEach((seg) => {
+    ctx.save()
+    ctx.rotate(angle)
+    ctx.beginPath()
+    ctx.moveTo(0, 0)
+    ctx.lineTo(Math.cos(seg.start) * R_in, Math.sin(seg.start) * R_in)
+    ctx.lineWidth = 1.0
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)'
     ctx.stroke()
+    ctx.restore()
+  })
+  
+  ctx.restore() // End clip for slices
+
+  // Draw Text
+  segments.value.forEach((seg, idx) => {
+    const mid = angle + seg.start + seg.sweep / 2
 
     ctx.save()
     ctx.translate(cx, cy)
-    ctx.rotate(angle + seg.start + seg.sweep / 2)
+    ctx.rotate(mid)
+    
     ctx.textAlign = 'right'
-    ctx.fillStyle = '#fff'
-    ctx.shadowColor = 'rgba(0,0,0,0.5)'
-    ctx.shadowBlur = 4
-    
-    // Dynamic text sizing & wrapping
-    const fontSize = seg.sweep > 0.35 ? 13 : 11
+    ctx.fillStyle = '#ffffff'
+    ctx.shadowColor = 'rgba(0,0,0,0.85)'
+    ctx.shadowBlur = 5
+    ctx.shadowOffsetX = 1
+    ctx.shadowOffsetY = 1
+
+    const fontSize = seg.sweep > 0.35 ? 16 : 14
     ctx.font = `bold ${fontSize}px sans-serif`
-    
-    // Split full name into multiple lines if too long
-    const words = seg.name.split(' ')
+
+    const words = (seg.name || '').split(' ')
     const lines = []
     let currentLine = words[0] || ''
-    
+
     for (let j = 1; j < words.length; j++) {
       const testLine = currentLine + ' ' + words[j]
       if (ctx.measureText(testLine).width > 110) {
@@ -158,43 +229,57 @@ function drawWheel(angle = 0) {
       }
     }
     lines.push(currentLine)
-    
-    const lineHeight = fontSize * 1.4
-    const startY = 0 - ((lines.length - 1) * lineHeight) / 2 + (fontSize / 3)
-    
-    lines.forEach((line, idx) => {
-      // maxWidth=135 fits nicely inside the radius
-      ctx.fillText(line, r - 15, startY + idx * lineHeight, 135)
+
+    const lineHeight = fontSize * 1.3
+    const startY = -((lines.length - 1) * lineHeight) / 2 + (fontSize / 3)
+
+    lines.forEach((line, lineIdx) => {
+      ctx.fillText(line, R_in - 15, startY + lineIdx * lineHeight, 140)
     })
     ctx.restore()
   })
 
-  // Center button overlay
+  // Center hub
   ctx.save()
-  ctx.beginPath()
-  ctx.arc(cx, cy, 32, 0, Math.PI * 2)
-  ctx.fillStyle = '#ffffff'
-  ctx.shadowColor = 'rgba(0,0,0,0.5)'
-  ctx.shadowBlur = 8
-  ctx.fill()
+  ctx.translate(cx, cy)
+  
+  // Center shadow
+  ctx.shadowColor = 'rgba(0,0,0,0.6)'
+  ctx.shadowBlur = 12
+  ctx.shadowOffsetY = 4
 
+  // Outer dark rim of button
   ctx.beginPath()
-  ctx.arc(cx, cy, 26, 0, Math.PI * 2)
-  ctx.fillStyle = '#1e293b'
+  ctx.arc(0, 0, 36, 0, Math.PI * 2)
+  const centerGrad = ctx.createLinearGradient(0, -36, 0, 36)
+  centerGrad.addColorStop(0, '#005b26')
+  centerGrad.addColorStop(1, '#001a07')
+  ctx.fillStyle = centerGrad
   ctx.fill()
   
-  ctx.fillStyle = '#fbbf24'
-  ctx.font = 'bold 14px sans-serif'
+  // Clear shadow
+  ctx.shadowColor = 'transparent'
+
+  // Inner button face
+  ctx.beginPath()
+  ctx.arc(0, 0, 30, 0, Math.PI * 2)
+  ctx.fillStyle = '#005928'
+  ctx.fill()
+
+  ctx.fillStyle = '#ffde00'
+  ctx.font = 'bold 16px sans-serif'
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
-  ctx.fillText(t.value.spin, cx, cy)
+  ctx.shadowColor = 'rgba(0,0,0,0.5)'
+  ctx.shadowBlur = 2
+  ctx.shadowOffsetY = 1
+  ctx.fillText(t.value.spin, 0, 0)
   ctx.restore()
 }
 
 async function spin() {
   if (spinning.value || alreadySpun.value || !segments.value.length) return
-  
-  // Xác định danh sách các giải thưởng còn suất (số lượng > 0)
+
   const availablePrizes = segments.value.filter(seg => seg.quantity > 0)
   if (!availablePrizes.length) {
     alert(t.value.out_of_prizes)
@@ -204,16 +289,17 @@ async function spin() {
   spinning.value = true
   showResult.value = false
 
-  // Weighted random pick (Dựa theo số lượng suất còn lại của availablePrizes)
   const total = availablePrizes.reduce((s, seg) => s + seg.quantity, 0)
   let rand = Math.random() * total
   let winner = availablePrizes[0]
   for (const seg of availablePrizes) {
     rand -= seg.quantity
-    if (rand <= 0) { winner = seg; break }
+    if (rand <= 0) {
+      winner = seg
+      break
+    }
   }
 
-  // Animate wheel to winner
   const winMid = winner.start + winner.sweep / 2
   const targetOffset = -Math.PI / 2 - winMid
   const fullSpins = (Math.PI * 2) * (5 + Math.floor(Math.random() * 4))
@@ -225,11 +311,11 @@ async function spin() {
 
   await new Promise<void>(resolve => {
     function animate(now: number) {
-      const t = Math.min((now - startTime) / duration, 1)
-      const ease = 1 - Math.pow(1 - t, 4)
+      const progress = Math.min((now - startTime) / duration, 1)
+      const ease = 1 - Math.pow(1 - progress, 4)
       currentAngle = startAngle + (targetAngle - startAngle) * ease
       drawWheel(currentAngle)
-      if (t < 1) requestAnimationFrame(animate)
+      if (progress < 1) requestAnimationFrame(animate)
       else resolve()
     }
     requestAnimationFrame(animate)
@@ -237,31 +323,30 @@ async function spin() {
 
   currentAngle = targetAngle % (Math.PI * 2)
   spinning.value = false
+  result.value = winner
+  showResult.value = true
+  alreadySpun.value = true
 
-    // Hiển thị kết quả NGAY sau khi animation kết thúc, không chờ API
-    result.value = winner
-    showResult.value = true
-    alreadySpun.value = true
-
-    // Lưu kết quả vào DB + Sheets ở background (không block UI)
-    $fetch('/api/spin', { method: 'POST', body: { prize_id: winner.id } })
-      .catch((e: any) => {
-        if (e?.statusCode === 401 || e?.data?.statusCode === 401) {
-          navigateTo('/access')
-        } else if (e?.data?.statusCode === 409) {
-          // Mã đã quay rồi - không làm gì thêm
-        }
-        // Các lỗi khác bỏ qua vì kết quả đã hiển thị
-      })
+  $fetch('/api/spin', { method: 'POST', body: { prize_id: winner.id } })
+    .catch((e: any) => {
+      if (e?.statusCode === 401 || e?.data?.statusCode === 401) {
+        navigateTo('/access')
+      } else if (e?.data?.statusCode === 409) {
+        // Ma da quay roi.
+      }
+    })
 }
 
 onMounted(() => {
   drawWheel(currentAngle)
-  // Tự hiển popup nếu đã quay rồi
   if (alreadySpun.value && result.value) {
     showResult.value = true
   }
 })
+
+watch(() => segments.value, () => {
+  drawWheel(currentAngle)
+}, { deep: true })
 
 async function enterNewCode() {
   await $fetch('/api/auth/logout', { method: 'POST' })
@@ -304,9 +389,6 @@ watch(segments, () => {
       </Transition>
     </div>
 
-    <h1 class="title">🎡 {{ t.title }}</h1>
-    <p class="subtitle">Sunshine Telecom 2026</p>
-
     <!-- Banner kết quả nếu đã quay rồi -->
     <div v-if="alreadySpun && result" class="won-banner">
       <div class="won-icon">🎊</div>
@@ -319,8 +401,8 @@ watch(segments, () => {
 
     <!-- Vòng quay (chỉ hiện khi chưa quay) -->
     <div v-else-if="translatedPrizes && translatedPrizes.length" class="wheel-wrap">
-      <div class="pointer">▼</div>
-      <canvas ref="canvasRef" width="420" height="420" class="canvas" @click="spin" />
+      <div class="pointer"></div>
+        <canvas ref="canvasRef" width="500" height="500" class="canvas" @click="spin" />
       <button class="spin-btn" :disabled="spinning" @click="spin">
         {{ spinning ? t.spinning : t.spin_now }}
       </button>
@@ -347,24 +429,39 @@ watch(segments, () => {
 * {
   box-sizing: border-box;
 }
+html,
 body {
   margin: 0;
   padding: 0;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background-color: #1e293b; /* Fallback for safe areas on mobile devices */
+  min-height: 100%;
+  background-color: #1e293b;
+  background-image: url('/Backgroundmobile.png');
+  background-size: 100vw 100dvh;
+  background-position: top center;
+  background-repeat: no-repeat;
+}
+
+@media (min-width: 768px) {
+  html,
+  body {
+    background-image: url('/BackgroundPC.png');
+    background-size: 100vw 100vh;
+    background-position: center center;
+  }
 }
 </style>
 
 <style scoped>
 .wheel-page {
   position: relative;
-  min-height: 100vh; /* changed from 80vh to 100vh for full screen */
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   justify-content: center; /* helps centering vertically on mobile */
   align-items: center;
   padding: 2rem 1rem;
-  background: linear-gradient(160deg, #1e293b 0%, #312e81 100%);
+  background: transparent;
 }
 .lang-switcher {
   position: absolute;
@@ -454,24 +551,6 @@ body {
   font-weight: 600;
   font-size: 1rem;
 }
-.title {
-  font-size: clamp(1.8rem, 6vw, 2.8rem);
-  font-weight: 800;
-  color: #fbbf24;
-  margin: 0;
-  text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  text-shadow: 0 4px 12px rgba(0,0,0,0.5);
-}
-.subtitle {
-  color: #cbd5e1;
-  margin: 0.5rem 0 2.5rem;
-  font-size: clamp(0.9rem, 3.5vw, 1.1rem);
-  text-align: center;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-}
 .wheel-wrap {
   position: relative;
   display: flex;
@@ -480,20 +559,24 @@ body {
   gap: 1.5rem;
 }
 .pointer {
-  font-size: 2.5rem;
-  color: #ef4444;
-  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6));
-  line-height: 1;
-  z-index: 2;
-  margin-bottom: -1.7rem;
+  width: 36px;
+  height: 90px; /* Dài thêm về phía trong mũi */
   position: relative;
-  top: 8px;
+  z-index: 2;
+  margin-bottom: -4rem; /* Cho phép kim ăn sâu hơn vào diện tích vòng quay */
+  top: 48px; /* Ép đỉnh kim thụt xuống, nằm ngang bằng với mép viền ngoài cùng */
+  background: linear-gradient(180deg, #6ced2a 0%, #007a33 100%);
+  border-radius: 4px 4px 0 0;
+  clip-path: polygon(0 0, 100% 0, 100% 75%, 50% 100%, 0 75%); /* Giữ độ tù mũi kim / bớt nhọn */
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.4));
 }
+/* Xóa bỏ ::before và ::after vì đã dùng clip-path trên thẻ .pointer */
 .canvas {
   border-radius: 50%;
   cursor: pointer;
-  box-shadow: 0 0 45px rgba(251,191,36,0.4), 0 12px 30px rgba(0,0,0,0.7);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
   max-width: 96vw;
+  max-height: 80vh; /* Ngăn không cho vượt quá chiều cao màn hình PC */
   height: auto;
   aspect-ratio: 1 / 1;
   touch-action: none;

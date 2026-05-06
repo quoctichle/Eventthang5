@@ -13,6 +13,31 @@ function selectLang(l: typeof lang.value) {
 const code = ref('')
 const error = ref('')
 const loading = ref(false)
+const isMobile = ref(false)
+const showAccessCard = ref(false)
+
+let mobileQuery: MediaQueryList | null = null
+let onMobileQueryChange: ((event: MediaQueryListEvent) => void) | null = null
+
+function syncViewportState(matches: boolean) {
+  isMobile.value = matches
+}
+
+function startAccess() {
+  showAccessCard.value = true
+}
+
+onMounted(() => {
+  mobileQuery = window.matchMedia('(max-width: 767px)')
+  syncViewportState(mobileQuery.matches)
+  onMobileQueryChange = (event) => syncViewportState(event.matches)
+  mobileQuery.addEventListener('change', onMobileQueryChange)
+})
+
+onBeforeUnmount(() => {
+  if (!mobileQuery || !onMobileQueryChange) return
+  mobileQuery.removeEventListener('change', onMobileQueryChange)
+})
 
 function onInput(e: Event) {
   code.value = (e.target as HTMLInputElement).value.toUpperCase()
@@ -71,12 +96,21 @@ async function submit() {
     </div>
 
     <!-- Background decoration -->
-    <div class="bg-orb orb1"></div>
-    <div class="bg-orb orb2"></div>
-    <div class="bg-orb orb3"></div>
+    <template v-if="showAccessCard">
+      <div class="bg-orb orb1"></div>
+      <div class="bg-orb orb2"></div>
+      <div class="bg-orb orb3"></div>
+    </template>
+
+    <Transition name="start-pop">
+      <div v-if="!showAccessCard" class="mobile-start-wrap">
+        <button type="button" class="mobile-start-btn" @click="startAccess">START</button>
+      </div>
+    </Transition>
 
     <!-- Card -->
-    <div class="card">
+    <Transition name="card-reveal">
+    <div v-if="showAccessCard" class="card">
       <!-- Logo -->
       <div class="brand">
         <div class="logo-wrap">
@@ -113,6 +147,7 @@ async function submit() {
         </button>
       </form>
     </div>
+    </Transition>
   </div>
 </template>
 
@@ -121,8 +156,21 @@ async function submit() {
 html, body {
   margin: 0;
   padding: 0;
-  background-color: #1e293b;
   min-height: 100%;
+  background-color: #1e293b;
+  background-image: url('/BACK_Mobile.png');
+  background-size: 100vw 100dvh;
+  background-position: top center;
+  background-repeat: no-repeat;
+}
+
+@media (min-width: 768px) {
+  html,
+  body {
+    background-image: url('/BACK_PC.png');
+    background-size: 100vw 100vh;
+    background-position: center center;
+  }
 }
 </style>
 
@@ -134,7 +182,7 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(160deg, #1e293b 0%, #312e81 100%);
+  background: transparent;
   padding: env(safe-area-inset-top, 4.5rem) 1rem env(safe-area-inset-bottom, 1rem);
   padding-top: max(4.5rem, env(safe-area-inset-top));
   overflow: hidden;
@@ -197,6 +245,40 @@ html, body {
 .lang-option.active { background: rgba(99,102,241,0.25); }
 .lang-option.active .lang-text { color: #a5b4fc; font-weight: 700; }
 .lang-text { color: rgba(255,255,255,0.85); font-weight: 500; font-size: 0.9rem; }
+
+/* Mobile start button */
+.mobile-start-wrap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: clamp(2.5rem, 10vh, 6.5rem);
+  display: flex;
+  justify-content: center;
+  z-index: 12;
+  padding: 0 1rem;
+}
+.mobile-start-btn {
+  min-width: 172px;
+  padding: 0.85rem 2.2rem;
+  border-radius: 999px;
+  border: 2px solid rgba(255,255,255,0.8);
+  background: linear-gradient(180deg, #007a34 0%, #005f29 100%);
+  color: #fff;
+  font-size: 2rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  cursor: pointer;
+  text-transform: uppercase;
+  box-shadow: 0 8px 22px rgba(0,70,33,0.5), inset 0 2px 0 rgba(255,255,255,0.25);
+  transition: transform 0.15s ease, filter 0.2s ease;
+}
+.mobile-start-btn:hover {
+  filter: brightness(1.07);
+}
+.mobile-start-btn:active {
+  transform: scale(0.98);
+}
 
 /* Card */
 .card {
@@ -356,4 +438,16 @@ input:disabled { opacity: 0.5; }
 /* Transitions */
 .fade-enter-active, .fade-leave-active { transition: opacity 0.15s, transform 0.15s; }
 .fade-enter-from, .fade-leave-to { opacity: 0; transform: translateY(-6px); }
+
+.start-pop-enter-active, .start-pop-leave-active { transition: opacity 0.2s, transform 0.25s; }
+.start-pop-enter-from, .start-pop-leave-to { opacity: 0; transform: translateY(14px); }
+
+.card-reveal-enter-active, .card-reveal-leave-active { transition: opacity 0.25s, transform 0.3s; }
+.card-reveal-enter-from, .card-reveal-leave-to { opacity: 0; transform: translateY(12px) scale(0.98); }
+
+@media (min-width: 768px) {
+  .mobile-start-wrap {
+    bottom: clamp(2.5rem, 8vh, 5.5rem);
+  }
+}
 </style>
