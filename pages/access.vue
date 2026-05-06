@@ -103,8 +103,19 @@ async function submit() {
     </template>
 
     <Transition name="start-pop">
-      <div v-if="!showAccessCard" class="mobile-start-wrap">
-        <button type="button" class="mobile-start-btn" @click="startAccess">{{ t.start_btn }}</button>
+      <div v-if="!showAccessCard" class="splash-screen">
+        <div class="splash-logo">
+          <img src="/logo.png" alt="Sunshine Telecom Logo" />
+        </div>
+        <div class="splash-titles">
+          <h1 class="splash-t1">SIGN UP AU UNLIMITED WIFI</h1>
+          <div class="splash-t2-wrapper">
+            <h2 class="splash-t2">WIN IPHONE 17 PRO MAX INSTANTLY</h2>
+          </div>
+        </div>
+        <div class="mobile-start-wrap">
+          <button type="button" class="mobile-start-btn" @click="startAccess">{{ t.start_btn }}</button>
+        </div>
       </div>
     </Transition>
 
@@ -245,6 +256,59 @@ html, body {
 .lang-option.active { background: rgba(99,102,241,0.25); }
 .lang-option.active .lang-text { color: #a5b4fc; font-weight: 700; }
 .lang-text { color: rgba(255,255,255,0.85); font-weight: 500; font-size: 0.9rem; }
+
+/* Splash Screen (Logo + Title) */
+.splash-screen {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.splash-logo {
+  margin-top: clamp(2rem, 5vh, 4rem);
+  width: clamp(150px, 40vw, 250px);
+}
+.splash-logo img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+.splash-titles {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1.5rem;
+  gap: 0.5rem;
+}
+.splash-t1 {
+  font-family: 'FSMagistral', sans-serif;
+  color: #005f29;
+  font-size: clamp(1.4rem, 5vw, 2.5rem);
+  font-weight: 900;
+  margin: 0;
+  text-transform: uppercase;
+  text-align: center;
+  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.4);
+}
+.splash-t2-wrapper {
+  background: #39b54a;
+  padding: 0.2rem 1.2rem;
+  transform: rotate(-1.5deg);
+  clip-path: polygon(1% 0, 99% 4%, 100% 100%, 0 96%);
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+}
+.splash-t2 {
+  font-family: 'FSMagistral', sans-serif;
+  color: #ffffff;
+  font-size: clamp(1rem, 3.8vw, 1.9rem);
+  font-weight: 900;
+  margin: 0;
+  text-transform: uppercase;
+  text-align: center;
+  transform: rotate(1.5deg); /* Counter-rotate text slightly to align straight while bg slants */
+}
 
 /* Mobile start button */
 .mobile-start-wrap {
