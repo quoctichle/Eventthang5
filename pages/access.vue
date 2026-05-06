@@ -299,9 +299,19 @@ html, body {
     #2bae39 100%
   );
   padding: 0.5rem 2.2rem 0.5rem;
-  transform: rotate(-1.5deg) skewX(-14deg);
-  border-radius: 2px;
-  box-shadow: 3px 5px 10px rgba(0, 0, 0, 0.3);
+  transform: rotate(-1deg) skewX(-10deg);
+  filter: drop-shadow(3px 5px 6px rgba(0,0,0,0.3));
+  clip-path: polygon(
+    4px 0, 
+    100% 0, 
+    calc(100% - 5px) 35%, 
+    100% 70%, 
+    calc(100% - 4px) 100%, 
+    4px 100%, 
+    0 70%, 
+    5px 35%, 
+    0 0
+  );
 }
 .splash-t2 {
   font-family: 'FSMagistral', sans-serif;
@@ -312,7 +322,7 @@ html, body {
   text-transform: uppercase;
   text-align: center;
   letter-spacing: 0.02em;
-  transform: skewX(14deg); /* Counter-skew */
+  transform: skewX(10deg); /* Counter-skew */
   text-shadow: 
     1px 1px 0 #00451a,
     2px 2px 0 #00451a,
