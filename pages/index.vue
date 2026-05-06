@@ -433,7 +433,6 @@ html,
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   min-height: 100%;
   background-color: #1e293b;
   background-image: url('/Backgroundmobile.png');

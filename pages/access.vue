@@ -264,7 +264,7 @@ html, body {
   border: 2px solid rgba(255,255,255,0.8);
   background: linear-gradient(180deg, #007a34 0%, #005f29 100%);
   color: #fff;
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: 'FSMagistral', 'Inter', system-ui, sans-serif;
   font-size: 2rem;
   font-weight: 800;
   letter-spacing: 0.04em;
