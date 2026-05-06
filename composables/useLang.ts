@@ -25,6 +25,8 @@ export const i18nData = {
     access_loading: "確認中...",
     access_error_default: "コードが無効です",
     start_btn: "スタート",
+    promo_t1: "AU無制限WIFIに登録して",
+    promo_t2: "iPhone 17 Pro Max を即ゲット",
   },
   vi: {
     title: "Vòng Quay May Mắn",
@@ -47,6 +49,8 @@ export const i18nData = {
     access_loading: "Đang kiểm tra...",
     access_error_default: "Mã không hợp lệ",
     start_btn: "BẮT ĐẦU",
+    promo_t1: "ĐĂNG KÝ AU THUÊ BAO WIFI",
+    promo_t2: "TRÚNG NGAY IPHONE 17 PRO MAX",
   },
   en: {
     title: "Lucky Spin Wheel",
@@ -69,6 +73,8 @@ export const i18nData = {
     access_loading: "Checking...",
     access_error_default: "Invalid code",
     start_btn: "START",
+    promo_t1: "SIGN UP AU UNLIMITED WIFI",
+    promo_t2: "WIN IPHONE 17 PRO MAX INSTANTLY",
   },
   my: {
     title: "ကံစမ်းမဲဘီး",
@@ -91,6 +97,8 @@ export const i18nData = {
     access_loading: "စစ်ဆေးနေသည်...",
     access_error_default: "ကုဒ်မမှန်ကန်ပါ",
     start_btn: "စတင်ရန်",
+    promo_t1: "AU UNLIMITED WIFI စာရင်းသွင်းပြီး",
+    promo_t2: "IPHONE 17 PRO MAX ချက်ချင်းရယူပါ",
   }
 }
 

@@ -105,9 +105,9 @@ async function submit() {
     <Transition name="start-pop">
       <div v-if="!showAccessCard" class="splash-screen">
         <div class="splash-titles">
-          <h1 class="splash-t1">SIGN UP AU UNLIMITED WIFI</h1>
+          <h1 class="splash-t1">{{ t.promo_t1 }}</h1>
           <div class="splash-t2-wrapper">
-            <h2 class="splash-t2">WIN IPHONE 17 PRO MAX INSTANTLY</h2>
+            <h2 class="splash-t2">{{ t.promo_t2 }}</h2>
           </div>
         </div>
         <div class="mobile-start-wrap">
