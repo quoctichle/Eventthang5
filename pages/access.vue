@@ -314,12 +314,12 @@ html, body {
   letter-spacing: 0.02em;
   transform: skewX(14deg); /* Counter-skew */
   text-shadow: 
-    1px 1px 0 #00220a,
-    2px 2px 0 #00220a,
-    3px 3px 0 #00220a,
-    4px 4px 0 #00220a,
-    5px 5px 0 #00220a,
-    5px 6px 8px rgba(0,0,0,0.5);
+    1px 1px 0 #00451a,
+    2px 2px 0 #00451a,
+    3px 3px 0 #00451a,
+    4px 4px 0 #00451a,
+    5px 5px 0 #00451a,
+    5px 6px 6px rgba(0,0,0,0.3);
 }
 
 /* Mobile start button */
