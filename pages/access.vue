@@ -283,20 +283,20 @@ html, body {
 }
 .splash-t2-wrapper {
   background: linear-gradient(102deg, 
-    #4ade80 0%, 
-    #39b54a 12%, 
-    #b0ff66 14%, 
-    #b0ff66 16%, 
-    #007328 16.5%, 
-    #007328 23%, 
-    #39b54a 24%, 
-    #2ca43c 66%, 
-    #b0ff66 68%, 
-    #b0ff66 70%, 
-    #007328 70.5%, 
-    #007328 77%, 
-    #2ca43c 78%, 
-    #20882a 100%
+    #3cdc2b 0%, 
+    #7fd41f 12%, 
+    #e5fc79 14%, 
+    #e5fc79 16%, 
+    #007a22 16.5%, 
+    #007a22 23%, 
+    #82cd1a 24%, 
+    #d1b800 66%, 
+    #fff770 68%, 
+    #fff770 70%, 
+    #7d6100 70.5%, 
+    #7d6100 77%, 
+    #d6a000 78%, 
+    #d67a00 100%
   );
   padding: 0.35rem 2.2rem 0.65rem;
   transform: rotate(-1deg) skewX(-10deg);
