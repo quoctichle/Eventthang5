@@ -49,7 +49,7 @@ export const i18nData = {
     access_loading: "Đang kiểm tra...",
     access_error_default: "Mã không hợp lệ",
     start_btn: "BẮT ĐẦU",
-    promo_t1: "ĐĂNG KÝ AU THUÊ BAO WIFI",
+    promo_t1: "ĐĂNG KÝ WIFI AU KHÔNG GIỚI HẠN",
     promo_t2: "TRÚNG NGAY IPHONE 17 PRO MAX",
   },
   en: {
