@@ -282,23 +282,17 @@ html, body {
   text-shadow: 0 2px 4px rgba(255, 255, 255, 0.4);
 }
 .splash-t2-wrapper {
-  background: linear-gradient(108deg,
-    #2eb842 0%, #2eb842 12%, 
-    #9dff66 12%, #9dff66 15%, 
-    #00471b 15%, #00471b 25%, 
-    #2eb842 25%, #2eb842 70%, 
-    #9dff66 70%, #9dff66 73%, 
-    #00471b 73%, #00471b 83%, 
-    #2eb842 83%, #2eb842 100%
+  position: relative;
+  background: linear-gradient(110deg, 
+    #39b54a 0%, #4ade80 20%, 
+    #39b54a 40%, #006a2c 45%, 
+    #006a2c 50%, #39b54a 55%, 
+    #4ade80 85%, #39b54a 100%
   );
-  padding: 0.4rem 2.5rem;
-  transform: rotate(-1.5deg) skewX(-2deg);
-  filter: drop-shadow(4px 5px 0px #003614);
-  clip-path: polygon(
-    18px 0%, calc(100% - 18px) 0%, 
-    100% 50%, calc(100% - 18px) 100%, 
-    18px 100%, 0% 50%
-  );
+  padding: 0.35rem 2.2rem;
+  transform: rotate(-2deg) skewX(-15deg);
+  border-radius: 3px;
+  box-shadow: 4px 6px 12px rgba(0, 0, 0, 0.25);
 }
 .splash-t2 {
   font-family: 'FSMagistral', sans-serif;
@@ -308,13 +302,12 @@ html, body {
   margin: 0;
   text-transform: uppercase;
   text-align: center;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.03em;
+  transform: skewX(15deg); /* Counter-skew text to keep it straight */
   text-shadow: 
-    1px 1px 0px #002c10, 
-    2px 2px 0px #002c10, 
-    3px 3px 0px #002c10,
-    4px 4px 0px #002c10,
-    5px 5px 0px #002c10;
+    1px 2px 0 #00471b,
+    2px 4px 0 #00471b,
+    4px 6px 6px rgba(0,0,0,0.3);
 }
 
 /* Mobile start button */
