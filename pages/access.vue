@@ -298,7 +298,7 @@ html, body {
     #2bae39 78%, 
     #2bae39 100%
   );
-  padding: 0.5rem 2.2rem 0.5rem;
+  padding: 0.35rem 2.2rem 0.65rem;
   transform: rotate(-1deg) skewX(-10deg);
   filter: drop-shadow(3px 5px 6px rgba(0,0,0,0.3));
   clip-path: polygon(
