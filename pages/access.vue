@@ -282,28 +282,7 @@ html, body {
   text-shadow: 0 2px 4px rgba(255, 255, 255, 0.4);
 }
 .splash-t2-wrapper {
-  background: linear-gradient(105deg, 
-    #2aa836 0%, 
-    #2aa836 12%, 
-    #d1fc6d 12.5%, 
-    #d1fc6d 14%, 
-    #004f1c 14.1%, 
-    #004f1c 19%, 
-    #2aa836 19.5%,
-    #2aa836 38%,
-    #d1fc6d 38.5%,
-    #d1fc6d 40%,
-    #004f1c 40.1%,
-    #004f1c 45%,
-    #2aa836 45.5%,
-    #2aa836 68%,
-    #d1fc6d 68.5%,
-    #d1fc6d 70%,
-    #004f1c 70.1%,
-    #004f1c 75%,
-    #2aa836 75.5%,
-    #2aa836 100%
-  );
+  background: #3cdc2b;
   padding: 0.35rem 2.2rem 0.65rem;
   transform: rotate(-1deg) skewX(-10deg);
   filter: drop-shadow(3px 5px 6px rgba(0,0,0,0.3));
