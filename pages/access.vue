@@ -282,10 +282,10 @@ html, body {
   text-shadow: 0 2px 4px rgba(255, 255, 255, 0.4);
 }
 .splash-t2-wrapper {
-  background: #39b54a;
-  padding: 0.4rem 1.4rem;
-  transform: rotate(-2.5deg);
-  box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+  background: linear-gradient(105deg, #39b54a 0%, #39b54a 25%, #006028 28%, #39b54a 32%, #39b54a 70%, #006028 74%, #39b54a 78%, #39b54a 100%);
+  padding: 0.15rem 1rem;
+  transform: rotate(-2.5deg) skewX(-12deg);
+  box-shadow: 2px 4px 8px rgba(0,0,0,0.2);
 }
 .splash-t2 {
   font-family: 'FSMagistral', sans-serif;
@@ -295,6 +295,8 @@ html, body {
   margin: 0;
   text-transform: uppercase;
   text-align: center;
+  letter-spacing: 0.02em;
+  text-shadow: 1px 2px 0px #005f29, 2px 4px 0px #005f29;
 }
 
 /* Mobile start button */
