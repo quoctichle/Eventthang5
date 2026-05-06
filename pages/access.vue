@@ -284,13 +284,13 @@ html, body {
 .splash-t2-wrapper {
   background: linear-gradient(105deg, #39b54a 0%, #39b54a 25%, #006028 28%, #39b54a 32%, #39b54a 70%, #006028 74%, #39b54a 78%, #39b54a 100%);
   padding: 0.25rem 1.6rem;
-  transform: rotate(-1.5deg) skewX(-4deg);
+  transform: rotate(-1deg) skewX(-2deg);
   filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.2));
   clip-path: polygon(
-    1.5% 0%, 98.5% 0%, 
-    100% 25%, 97% 50%, 100% 75%, 98.5% 100%, 
-    1.5% 100%, 
-    0% 75%, 3% 50%, 0% 25%, 1.5% 0%
+    0.5% 0%, 99.5% 0%, 
+    100% 25%, 99% 50%, 100% 75%, 99.5% 100%, 
+    0.5% 100%, 
+    0% 75%, 1% 50%, 0% 25%, 0.5% 0%
   );
 }
 .splash-t2 {
