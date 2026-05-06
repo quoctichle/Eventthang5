@@ -296,8 +296,6 @@ html, body {
   margin: 0;
   text-transform: uppercase;
   text-align: center;
-  font-style: italic; /* Làm nghiêng chữ */
-  transform: rotate(1.5deg); /* Counter-rotate text slightly to align straight while bg slants */
 }
 
 /* Mobile start button */
