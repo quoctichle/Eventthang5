@@ -104,9 +104,6 @@ async function submit() {
 
     <Transition name="start-pop">
       <div v-if="!showAccessCard" class="splash-screen">
-        <div class="splash-logo">
-          <img src="/logo.png" alt="Sunshine Telecom Logo" />
-        </div>
         <div class="splash-titles">
           <h1 class="splash-t1">SIGN UP AU UNLIMITED WIFI</h1>
           <div class="splash-t2-wrapper">
@@ -262,25 +259,17 @@ html, body {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
   z-index: 10;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.splash-logo {
-  margin-top: clamp(2rem, 5vh, 4rem);
-  width: clamp(150px, 40vw, 250px);
-}
-.splash-logo img {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
 }
 .splash-titles {
+  position: absolute;
+  top: 48%; /* Di chuyển text xuống khu vực giữa để chồng lên phần bánh xe/điện thoại giống ảnh */
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 1.5rem;
   gap: 0.5rem;
+  width: 100%;
 }
 .splash-t1 {
   font-family: 'FSMagistral', sans-serif;
