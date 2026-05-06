@@ -165,9 +165,10 @@ h1 {
 .eye-btn {
   position: absolute;
   right: 0.5rem;
-  background: none;
+  background: transparent !important;
+  width: auto !important;
   border: none;
-  padding: 0;
+  padding: 0 !important;
   color: #64748b;
   cursor: pointer;
   display: flex;
@@ -206,7 +207,7 @@ h1 {
   border-radius: 6px;
 }
 
-button {
+button[type="submit"] {
   width: 100%;
   background: #2563eb;
   color: white;
@@ -220,11 +221,11 @@ button {
   transition: background 0.2s;
 }
 
-button:hover {
+button[type="submit"]:hover {
   background: #1d4ed8;
 }
 
-button:disabled {
+button[type="submit"]:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
