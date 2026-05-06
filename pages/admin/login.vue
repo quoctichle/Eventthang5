@@ -5,6 +5,20 @@ const email = ref('')
 const password = ref('')
 const error = ref('')
 const loading = ref(false)
+const showPassword = ref(false)
+const remember = ref(false)
+
+onMounted(() => {
+  const saved = localStorage.getItem('admin_login_cred')
+  if (saved) {
+    try {
+      const data = JSON.parse(saved)
+      if (data.email) email.value = data.email
+      if (data.password) password.value = data.password
+      remember.value = true
+    } catch(e) {}
+  }
+})
 
 async function login() {
   error.value = ''
@@ -14,6 +28,13 @@ async function login() {
       method: 'POST',
       body: { email: email.value, password: password.value },
     })
+    
+    if (remember.value) {
+      localStorage.setItem('admin_login_cred', JSON.stringify({ email: email.value, password: password.value }))
+    } else {
+      localStorage.removeItem('admin_login_cred')
+    }
+
     await navigateTo('/admin')
   } catch (e: any) {
     error.value = e.data?.message || 'Đăng nhập thất bại'
@@ -35,20 +56,32 @@ async function login() {
           <input
             v-model="email"
             type="email"
-            placeholder="admin@sunshine.com"
+            placeholder="Nhập email..."
             required
             autocomplete="email"
           />
         </div>
         <div class="field">
           <label>Mật khẩu</label>
-          <input
-            v-model="password"
-            type="password"
-            placeholder="••••••••"
-            required
-            autocomplete="current-password"
-          />
+          <div class="password-wrap">
+            <input
+              v-model="password"
+              :type="showPassword ? 'text' : 'password'"
+              placeholder="Nhập mật khẩu..."
+              required
+              autocomplete="current-password"
+            />
+            <button type="button" class="eye-btn" @click="showPassword = !showPassword">
+              <svg v-if="!showPassword" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              <svg v-else viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="field-remember">
+          <label>
+            <input type="checkbox" v-model="remember" /> <span>Lưu đăng nhập</span>
+          </label>
         </div>
 
         <p v-if="error" class="error">{{ error }}</p>
@@ -119,6 +152,49 @@ h1 {
 .field input:focus {
   outline: none;
   border-color: #2563eb;
+}
+
+.password-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.password-wrap input {
+  padding-right: 2.5rem;
+}
+.eye-btn {
+  position: absolute;
+  right: 0.5rem;
+  background: none;
+  border: none;
+  padding: 0;
+  color: #64748b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.eye-btn:hover {
+  color: #0f172a;
+}
+
+.field-remember {
+  margin-bottom: 1.5rem;
+}
+.field-remember label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  color: #475569;
+  cursor: pointer;
+  user-select: none;
+}
+.field-remember input {
+  margin: 0;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
 }
 
 .error {
