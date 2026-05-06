@@ -283,9 +283,8 @@ html, body {
 }
 .splash-t2-wrapper {
   background: #39b54a;
-  padding: 0.2rem 1.2rem;
-  transform: rotate(-1.5deg);
-  clip-path: polygon(1% 0, 99% 4%, 100% 100%, 0 96%);
+  padding: 0.4rem 1.4rem;
+  transform: rotate(-2.5deg);
   box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
 }
 .splash-t2 {
