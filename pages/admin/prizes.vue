@@ -62,7 +62,7 @@ async function resetWinner(code: string) {
       <table v-if="filtered.length">
         <thead>
           <tr>
-            <th>Mã truy cập</th>
+            <th>Mã tham gia</th>
             <th>Giải trúng</th>
             <th>Thời gian quay</th>
             <th></th>

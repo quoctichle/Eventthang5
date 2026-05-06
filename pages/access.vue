@@ -104,7 +104,7 @@ async function submit() {
 
     <Transition name="start-pop">
       <div v-if="!showAccessCard" class="mobile-start-wrap">
-        <button type="button" class="mobile-start-btn" @click="startAccess">START</button>
+        <button type="button" class="mobile-start-btn" @click="startAccess">{{ t.start_btn }}</button>
       </div>
     </Transition>
 

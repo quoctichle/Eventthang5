@@ -93,7 +93,7 @@ async function bulkDelete() {
 
 <template>
   <div>
-    <h1 class="page-title">🎫 Quản lý mã truy cập</h1>
+    <h1 class="page-title">🎫 Quản lý mã tham gia</h1>
 
     <!-- Popup mã đã sử dụng -->
     <Transition name="fade">

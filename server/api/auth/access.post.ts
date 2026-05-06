@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event)
 
   if (!body.code) {
-    throw createError({ statusCode: 400, message: 'Vui lòng nhập mã truy cập' })
+    throw createError({ statusCode: 400, message: 'Vui lòng nhập mã tham gia' })
   }
 
   const row = await DB.prepare(
@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
   ).bind(body.code.trim()).first()
 
   if (!row) {
-    throw createError({ statusCode: 401, message: 'Mã truy cập không hợp lệ' })
+    throw createError({ statusCode: 401, message: 'Mã tham gia không hợp lệ' })
   }
 
   const session = await useSession(event, { password: config.sessionSecret })

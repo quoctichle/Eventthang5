@@ -19,11 +19,12 @@ export const i18nData = {
     enter_new_code: "別のコードを入力",
     // access page
     access_title: "アクセスコードを入力",
-    access_desc: "続けるには主催者から発行されたコードを入力してください。",
+    access_desc: "参加するには主催者からのコードを入力してください。",
     access_placeholder: "コードをここに入力...",
     access_btn: "続ける →",
     access_loading: "確認中...",
-    access_error_default: "コードが無効です"
+    access_error_default: "コードが無効です",
+    start_btn: "スタート",
   },
   vi: {
     title: "Vòng Quay May Mắn",
@@ -39,12 +40,13 @@ export const i18nData = {
     error: "Có lỗi xảy ra, vui lòng thử lại!",
     enter_new_code: "Nhập mã khác",
     // access page
-    access_title: "Nhập mã truy cập",
-    access_desc: "Vui lòng nhập mã do ban tổ chức cấp để tiếp tục.",
+    access_title: "Nhập mã tham gia",
+    access_desc: "Vui lòng nhập mã tham gia do ban tổ chức cấp để quy đổi thưởng.",
     access_placeholder: "Nhập mã tại đây...",
     access_btn: "Tiếp tục →",
     access_loading: "Đang kiểm tra...",
-    access_error_default: "Mã không hợp lệ"
+    access_error_default: "Mã không hợp lệ",
+    start_btn: "BẮT ĐẦU",
   },
   en: {
     title: "Lucky Spin Wheel",
@@ -60,12 +62,13 @@ export const i18nData = {
     error: "An error occurred, please try again!",
     enter_new_code: "Enter another code",
     // access page
-    access_title: "Enter Access Code",
-    access_desc: "Please enter the code provided by the organizer to continue.",
+    access_title: "Enter Participation Code",
+    access_desc: "Please enter the participation code provided by the organizer to claim your reward.",
     access_placeholder: "Enter code here...",
     access_btn: "Continue →",
     access_loading: "Checking...",
-    access_error_default: "Invalid code"
+    access_error_default: "Invalid code",
+    start_btn: "START",
   },
   my: {
     title: "ကံစမ်းမဲဘီး",
@@ -81,12 +84,13 @@ export const i18nData = {
     error: "အမှားအယွင်းတစ်ခုဖြစ်ပွားခဲ့သည်၊ ကျေးဇူးပြု၍ ပြန်လည်ကြိုးစားပါ!",
     enter_new_code: "အခြားကုဒ်ရိုက်ထည့်ပါ",
     // access page
-    access_title: "ဝင်ရောက်ခွင့်ကုဒ် ရိုက်ထည့်ပါ",
-    access_desc: "ဆက်လက်ဆောင်ရွက်ရန် စီစဉ်သူထံမှ ပေးသောကုဒ်ကို ရိုက်ထည့်ပါ။",
+    access_title: "ပါဝင်ခွင့်ကုဒ်ရိုက်ထည့်ပါ",
+    access_desc: "ဆုကိုရယူရန် စီစဉ်သူထံမှ ပေးသောပါဝင်ခွင့်ကုဒ်ကို ရိုက်ထည့်ပါ။",
     access_placeholder: "ကုဒ်ကို ဤနေရာတွင် ရိုက်ထည့်ပါ...",
     access_btn: "ဆက်လက်ဆောင်ရွက်မည် →",
     access_loading: "စစ်ဆေးနေသည်...",
-    access_error_default: "ကုဒ်မမှန်ကန်ပါ"
+    access_error_default: "ကုဒ်မမှန်ကန်ပါ",
+    start_btn: "စတင်ရန်",
   }
 }
 

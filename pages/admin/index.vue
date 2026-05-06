@@ -20,7 +20,7 @@ const currentPrefix = `T${now.getMonth() + 1}${now.getFullYear().toString().slic
         <div class="icon">🎫</div>
         <div class="info">
           <div class="count">{{ codes?.length ?? 0 }}</div>
-          <div class="label">Mã truy cập</div>
+          <div class="label">Mã tham gia</div>
           <div class="sub">Tháng này: {{ currentPrefix }}XXXXXX</div>
         </div>
       </NuxtLink>

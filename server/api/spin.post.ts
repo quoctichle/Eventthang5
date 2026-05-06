@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig(event)
   const session = await useSession(event, { password: config.sessionSecret })
   const code = session.data?.code
-  if (!code) throw createError({ statusCode: 401, message: 'Chưa nhập mã truy cập' })
+  if (!code) throw createError({ statusCode: 401, message: 'Chưa nhập mã tham gia' })
 
   const { DB } = event.context.cloudflare.env
 
