@@ -283,22 +283,21 @@ html, body {
 }
 .splash-t2-wrapper {
   background: linear-gradient(108deg,
-    #2eb842 0%, #2eb842 16%, 
-    #9dff66 16%, #9dff66 18.5%, 
-    #00471b 18.5%, #00471b 23%, 
-    #2eb842 23%, #2eb842 66%, 
-    #9dff66 66%, #9dff66 68.5%, 
-    #00471b 68.5%, #00471b 73%, 
-    #2eb842 73%, #2eb842 100%
+    #2eb842 0%, #2eb842 12%, 
+    #9dff66 12%, #9dff66 15%, 
+    #00471b 15%, #00471b 25%, 
+    #2eb842 25%, #2eb842 70%, 
+    #9dff66 70%, #9dff66 73%, 
+    #00471b 73%, #00471b 83%, 
+    #2eb842 83%, #2eb842 100%
   );
-  padding: 0.35rem 1.8rem;
+  padding: 0.4rem 2.5rem;
   transform: rotate(-1.5deg) skewX(-2deg);
-  filter: drop-shadow(2px 8px 6px rgba(0,0,0,0.25));
+  filter: drop-shadow(4px 5px 0px #003614);
   clip-path: polygon(
-    1.5% 0%, 98.5% 0%, 
-    100% 20%, 98% 50%, 100% 80%, 98.5% 100%, 
-    1% 100%, 
-    0% 80%, 2% 50%, 0% 20%, 1.5% 0%
+    18px 0%, calc(100% - 18px) 0%, 
+    100% 50%, calc(100% - 18px) 100%, 
+    18px 100%, 0% 50%
   );
 }
 .splash-t2 {
@@ -311,10 +310,11 @@ html, body {
   text-align: center;
   letter-spacing: 0.02em;
   text-shadow: 
-    1px 1px 0px #004d16, 
-    2px 2px 0px #004d16, 
-    3px 3px 0px #004d16,
-    4px 4px 0px #004d16;
+    1px 1px 0px #002c10, 
+    2px 2px 0px #002c10, 
+    3px 3px 0px #002c10,
+    4px 4px 0px #002c10,
+    5px 5px 0px #002c10;
 }
 
 /* Mobile start button */
