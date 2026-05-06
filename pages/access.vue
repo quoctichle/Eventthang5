@@ -262,7 +262,7 @@ html, body {
 }
 .splash-titles {
   position: absolute;
-  top: 48%; /* Di chuyển text xuống khu vực giữa để chồng lên phần bánh xe/điện thoại giống ảnh */
+  top: 22%; /* Kéo dịch lên trên để nằm giữa khoảng trống từ logo đến cụm điện thoại */
   left: 50%;
   transform: translate(-50%, -50%);
   display: flex;
