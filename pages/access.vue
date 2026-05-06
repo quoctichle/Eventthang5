@@ -290,9 +290,7 @@ html, body {
     #007a22 19.5%, 
     #007a22 26%, 
     #82cd1a 26.5%, 
-    #d1b800 75%, 
-    #fff770 78%, 
-    #fff770 100%
+    #82cd1a 100%
   );
   padding: 0.35rem 2.2rem 0.65rem;
   transform: rotate(-1deg) skewX(-10deg);
