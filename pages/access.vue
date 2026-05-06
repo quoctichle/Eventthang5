@@ -282,27 +282,39 @@ html, body {
   text-shadow: 0 2px 4px rgba(255, 255, 255, 0.4);
 }
 .splash-t2-wrapper {
-  background: linear-gradient(105deg, #39b54a 0%, #39b54a 25%, #006028 28%, #39b54a 32%, #39b54a 70%, #006028 74%, #39b54a 78%, #39b54a 100%);
-  padding: 0.25rem 1.6rem;
-  transform: rotate(-1deg) skewX(-2deg);
-  filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.2));
+  background: linear-gradient(108deg,
+    #2eb842 0%, #2eb842 16%, 
+    #9dff66 16%, #9dff66 18.5%, 
+    #00471b 18.5%, #00471b 23%, 
+    #2eb842 23%, #2eb842 66%, 
+    #9dff66 66%, #9dff66 68.5%, 
+    #00471b 68.5%, #00471b 73%, 
+    #2eb842 73%, #2eb842 100%
+  );
+  padding: 0.35rem 1.8rem;
+  transform: rotate(-1.5deg) skewX(-2deg);
+  filter: drop-shadow(2px 8px 6px rgba(0,0,0,0.25));
   clip-path: polygon(
-    0.5% 0%, 99.5% 0%, 
-    100% 25%, 99% 50%, 100% 75%, 99.5% 100%, 
-    0.5% 100%, 
-    0% 75%, 1% 50%, 0% 25%, 0.5% 0%
+    1.5% 0%, 98.5% 0%, 
+    100% 20%, 98% 50%, 100% 80%, 98.5% 100%, 
+    1% 100%, 
+    0% 80%, 2% 50%, 0% 20%, 1.5% 0%
   );
 }
 .splash-t2 {
   font-family: 'FSMagistral', sans-serif;
   color: #ffffff;
-  font-size: clamp(1rem, 3.8vw, 1.9rem);
+  font-size: clamp(1.1rem, 4vw, 2rem);
   font-weight: 900;
   margin: 0;
   text-transform: uppercase;
   text-align: center;
   letter-spacing: 0.02em;
-  text-shadow: 1px 2px 0px #005f29, 2px 4px 0px #005f29;
+  text-shadow: 
+    1px 1px 0px #004d16, 
+    2px 2px 0px #004d16, 
+    3px 3px 0px #004d16,
+    4px 4px 0px #004d16;
 }
 
 /* Mobile start button */
