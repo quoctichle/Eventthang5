@@ -282,32 +282,54 @@ html, body {
   text-shadow: 0 2px 4px rgba(255, 255, 255, 0.4);
 }
 .splash-t2-wrapper {
-  position: relative;
-  background: linear-gradient(110deg, 
-    #39b54a 0%, #4ade80 20%, 
-    #39b54a 40%, #006a2c 45%, 
-    #006a2c 50%, #39b54a 55%, 
-    #4ade80 85%, #39b54a 100%
+  background: linear-gradient(102deg, 
+    #2bae39 0%, 
+    #2bae39 12%, 
+    #b0ff66 14%, 
+    #b0ff66 16%, 
+    #004f1c 16.5%, 
+    #004f1c 23%, 
+    #2bae39 24%, 
+    #2bae39 66%, 
+    #b0ff66 68%, 
+    #b0ff66 70%, 
+    #004f1c 70.5%, 
+    #004f1c 77%, 
+    #2bae39 78%, 
+    #2bae39 100%
   );
   padding: 0.35rem 2.2rem;
-  transform: rotate(-2deg) skewX(-15deg);
-  border-radius: 3px;
-  box-shadow: 4px 6px 12px rgba(0, 0, 0, 0.25);
+  transform: rotate(-1.5deg);
+  filter: drop-shadow(2px 6px 4px rgba(0,0,0,0.25));
+  clip-path: polygon(
+    6px 0%, 
+    100% 0%, 
+    calc(100% - 8px) 18%, 
+    100% 32%, 
+    calc(100% - 10px) 68%, 
+    100% 88%, 
+    calc(100% - 4px) 100%, 
+    8px 100%, 
+    12px 80%, 
+    0% 55%, 
+    10px 35%, 
+    2px 15%
+  );
 }
 .splash-t2 {
   font-family: 'FSMagistral', sans-serif;
   color: #ffffff;
-  font-size: clamp(1.1rem, 4vw, 2rem);
+  font-size: clamp(1.1rem, 4.5vw, 2rem);
   font-weight: 900;
   margin: 0;
   text-transform: uppercase;
   text-align: center;
-  letter-spacing: 0.03em;
-  transform: skewX(15deg); /* Counter-skew text to keep it straight */
+  letter-spacing: 0.02em;
   text-shadow: 
-    1px 2px 0 #00471b,
-    2px 4px 0 #00471b,
-    4px 6px 6px rgba(0,0,0,0.3);
+    1px 1px 0 #1b8726,
+    2px 2px 0 #1b8726,
+    3px 3px 0 #1b8726,
+    4px 4px 6px rgba(0,0,0,0.3);
 }
 
 /* Mobile start button */
