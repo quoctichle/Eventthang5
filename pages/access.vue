@@ -166,7 +166,7 @@ html, body {
   padding: 0;
   min-height: 100%;
   background-color: #1e293b;
-  background-image: url('/BACK_Mobile.png');
+  background-image: url('/Back_Mobile.png');
   background-size: 100vw 100dvh;
   background-position: top center;
   background-repeat: no-repeat;
@@ -175,7 +175,7 @@ html, body {
 @media (min-width: 768px) {
   html,
   body {
-    background-image: url('/BACK_PC.png');
+    background-image: url('/Back_PC.png');
     background-size: 100vw 100vh;
     background-position: center center;
   }
